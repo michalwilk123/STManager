@@ -40,6 +40,10 @@ class UiMainWindow(object):
         self.statusbar = QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
+        self.statusbar.setFixedHeight(20)
+        # self.statusbar.setStyleSheet(
+        #     "background-color:white;"
+        # )
 
         # Actions choices
         self.selectFolderAction = QAction(MainWindow)

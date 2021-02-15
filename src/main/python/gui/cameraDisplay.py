@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QFrame, QPushButton, QWidget, QLabel
+from PyQt5.QtWidgets import QFrame, QPushButton, QWidget, QLabel, QSizePolicy
 from PyQt5.QtCore import QCoreApplication, QRect, Qt, QTimer
 from PyQt5.QtGui import QImage, QPixmap
 from config.macros import FRAME_RATE, FRAMES_BEETWEEN_SCANS, BEEP_SOUND_PATH
@@ -14,7 +14,7 @@ class CameraDisplayFrame(QFrame):
     def __init__(self, top):
         super().__init__(top.centralwidget)
         self.top = top
-        self.setGeometry(QRect(10, 10, 741, 561))
+        self.setGeometry(QRect(10,10, 740, 570))
         self.setAutoFillBackground(False)
         self.setFrameShape(QFrame.StyledPanel)
         self.setFrameShadow(QFrame.Raised)
@@ -23,11 +23,12 @@ class CameraDisplayFrame(QFrame):
 
 
     def initUI(self):
-        # create a label
-        return 
+        """
+        Initializing live camera preview
+        """
         self.save_seq = 1
         self.label = QLabel(self)
-        self.label.setGeometry(QRect(0, 0, 741, 561))
+        self.label.setGeometry(QRect(0, 0, self.width(), self.height()))
         self.pictureRequest = False
         self.newProduct = True
         self.camera_name = "qwerty"
@@ -89,13 +90,17 @@ class CameraDisplayFrame(QFrame):
 
         if ret:
             # setting up preview
-            rgbImage = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            rgbImage = cv2.resize(
+                cv2.cvtColor(frame, cv2.COLOR_BGR2RGB),
+                (self.label.width(), self.label.height())
+            )
+            
             h, w, ch = rgbImage.shape
             bytesPerLine = ch * w
             # per interval we switch image from the camera
             self.label.setPixmap(QPixmap.fromImage(
                 QImage(rgbImage.data, w, h, bytesPerLine, QImage.Format_RGB888)
-                    .scaled(640, 480, Qt.KeepAspectRatio)
+                    .scaled(self.label.width(), self.label.height(), Qt.KeepAspectRatio)
             ))
         else: print("lost connection")
 

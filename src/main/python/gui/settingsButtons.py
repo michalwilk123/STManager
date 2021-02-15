@@ -6,33 +6,21 @@ class SettingsButtonsFrame(QFrame):
         super().__init__(top.centralwidget)
 
         self.top = top
-        self.setGeometry(QRect(0, 579, 751, 61))
+        self.setGeometry(QRect(10, 590, 740, 60))
         self.setFrameShape(QFrame.StyledPanel)
         self.setFrameShadow(QFrame.Raised)
-        self.setObjectName("settingButtonsFrame")
 
-        self.photoButton = QPushButton(self)
-        self.photoButton.setGeometry(QRect(10, 10, 141, 41))
-        self.photoButton.setObjectName("photoButton")
+        self.photoButton = QPushButton(self, text="Photo")
+        self.photoButton.setGeometry(QRect(10, 10, 140, 40))
 
-        self.showProductsButton = QPushButton(self)
-        self.showProductsButton.setGeometry(QRect(160, 10, 141, 41))
-        self.showProductsButton.setObjectName("showProductsButton")
+        self.showProductsButton = QPushButton(self, text="Products")
+        self.showProductsButton.setGeometry(QRect(160, 10, 140, 40))
 
-        self.changeUserButton = QPushButton(self)
-        self.changeUserButton.setGeometry(QRect(310, 10, 131, 41))
-        self.changeUserButton.setObjectName("changeUserButton")
+        self.changeUserButton = QPushButton(self, text="Switch User")
+        self.changeUserButton.setGeometry(QRect(310, 10, 140, 40))
 
-        self.switchDeviceButton = QPushButton(self)
-        self.switchDeviceButton.setGeometry(QRect(450, 10, 131, 41))
-        self.switchDeviceButton.setObjectName("switchDeviceButton")
-
-        # setting up text for buttons
-        _translate = QCoreApplication.translate
-        self.photoButton.setText(_translate("MainWindow", "Photo"))
-        self.showProductsButton.setText(_translate("MainWindow", "Products"))
-        self.changeUserButton.setText(_translate("MainWindow", "Switch User"))
-        self.switchDeviceButton.setText(_translate("MainWindow", "Scan With Scanner"))
+        self.switchDeviceButton = QPushButton(self, text="Scanner Mode")
+        self.switchDeviceButton.setGeometry(QRect(460, 10, 140, 40))
 
 
     def setup(self):
