@@ -1,0 +1,6 @@
+/.venv
+/temp
+*.jpg
+*.pyc
+*.ui
+*.png
