@@ -1,5 +1,7 @@
+from __future__ import annotations
 from PyQt5.QtWidgets import QFrame, QPushButton, QWidget, QLabel, QSizePolicy
-from PyQt5.QtCore import QCoreApplication, QRect, Qt, QTimer
+from PyQt5.QtCore import QCoreApplication, QRect, Qt, QThread, \
+    pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QImage, QPixmap
 from config.macros import FRAME_RATE, FRAMES_BEETWEEN_SCANS, BEEP_SOUND_PATH
 from pyzbar import pyzbar
@@ -10,8 +12,98 @@ import os
 import time
 
 
+class CameraPreviewThread(QThread):
+    change_pixmap = pyqtSignal(QImage)
+    ms_per_frame = int((1 / FRAME_RATE) * 1000)
+    pictureRequest = False
+
+    def __init__(self, parent, top:UiMainWindow, width:int, 
+        height:int, user:str="Anonim",
+        save_seq:int=1, camera_name:str="None", deviceNum:int=0):
+        super().__init__(parent)
+        CameraPreviewThread.__save_seq = save_seq
+        CameraPreviewThread.camera_name = camera_name
+        CameraPreviewThread.user = user
+        CameraPreviewThread.deviceNum = deviceNum
+        CameraPreviewThread.top = top
+        CameraPreviewThread.width = width
+        CameraPreviewThread.height = height
+
+
+    def run(self):
+        cap = cv2.VideoCapture(CameraPreviewThread.deviceNum)
+        newProduct = True
+        spacingCounter = 0
+        barcodes = []
+
+        while not self.isInterruptionRequested():
+            ret, frame = cap.read()
+
+            if CameraPreviewThread.pictureRequest:
+                path = CameraPreviewThread.top.getPhotoDestinationPath()
+                timestamp = time.strftime("%d-%m-%Y-%H_%M_%S")
+                print(path)
+
+                cv2.imwrite(
+                    os.path.join(
+                        path, "%s-%04d-%s.jpg" % (
+                            CameraPreviewThread.user,
+                            CameraPreviewThread.__save_seq,
+                            timestamp
+                        )
+                    ),
+                    frame
+                )
+                CameraPreviewThread.__save_seq += 1
+                CameraPreviewThread.pictureRequest = False
+
+        
+            if newProduct:
+                # if we already know product barcode, we stop scanning for better performance
+                if spacingCounter == FRAMES_BEETWEEN_SCANS and ret:
+                    # looking for barcode in camera input
+                    spacingCounter=0
+                    barcodes = pyzbar.decode(frame)
+                else:   spacingCounter+=1
+
+                for barcode in barcodes:
+                    # printing highlight of found barcodes
+                    (x,y,width,height) = barcode.rect
+                    cv2.rectangle(frame, (x, y), (x + width, y + height), (0, 0, 255), 4)
+                    barcodeData = barcode.data.decode("utf-8")
+                    barcodeType = barcode.type
+
+                if barcodes:
+                    Thread(target=lambda:playsound(BEEP_SOUND_PATH)).run()
+
+                    top.productManagerFrame.setBarcode(
+                        barcodes[0].data.decode("utf-8")
+                    )
+                    newProduct = False
+
+            if ret:
+                rgbImage = cv2.resize(
+                    cv2.cvtColor(frame, cv2.COLOR_BGR2RGB),
+                    (CameraPreviewThread.width, CameraPreviewThread.height)
+                )
+            
+                h, w, ch = rgbImage.shape
+                bytesPerLine = ch * w
+                self.change_pixmap.emit(
+                    QImage(rgbImage.data, w, h, bytesPerLine, QImage.Format_RGB888)
+                        .scaled(
+                            CameraPreviewThread.width, 
+                            CameraPreviewThread.height, 
+                            Qt.KeepAspectRatio
+                        )
+                )
+            else: print("lost connection")
+            QThread.msleep(CameraPreviewThread.ms_per_frame)
+
+
+
 class CameraDisplayFrame(QFrame):
-    def __init__(self, top):
+    def __init__(self, top:UiMainWindow):
         super().__init__(top.centralwidget)
         self.top = top
         self.setGeometry(QRect(10,10, 740, 570))
@@ -26,87 +118,25 @@ class CameraDisplayFrame(QFrame):
         """
         Initializing live camera preview
         """
-        self.save_seq = 1
         self.label = QLabel(self)
         self.label.setGeometry(QRect(0, 0, self.width(), self.height()))
-        self.pictureRequest = False
-        self.newProduct = True
-        self.camera_name = "qwerty"
-        self.barcodes = []
 
-        self.spacingCounter = 0
-        self.ovCapture = cv2.VideoCapture(self.top.getCameraIndex())
-        self.timer = QTimer(self.top.centralwidget)
-        self.timer.setInterval(int((1 / FRAME_RATE) * 1000))
-        self.timer.timeout.connect(self.nextFrame)
-        self.timer.start()
+        self.cameraThread = CameraPreviewThread(self, self.top, \
+            self.width(), self.height()
+        )
+        self.cameraThread.change_pixmap.connect(
+            self.setImage
+        )
+        self.cameraThread.start()
 
 
-    def nextFrame(self):
-        ret, frame = self.ovCapture.read()
+    @pyqtSlot(QImage)
+    def setImage(self, image):
+        self.label.setPixmap(QPixmap.fromImage(image))
 
-        if self.pictureRequest:
-            path = self.top.getPhotoDestinationPath()
-            timestamp = time.strftime("%d-%m-%Y-%H_%M_%S")
-            print(path)
 
-            cv2.imwrite(
-                os.path.join(
-                    path, "%s-%04d-%s.jpg" % (
-                        self.top.username,
-                        self.save_seq,
-                        timestamp
-                    )
-                ),
-                frame
-            )
-            self.save_seq += 1
-            self.pictureRequest = False
-
-        
-        if self.newProduct:
-            # if we already know product barcode, we stop scanning for better performance
-
-            if self.spacingCounter == FRAMES_BEETWEEN_SCANS and ret:
-                # looking for barcode in camera input
-                self.spacingCounter=0
-                self.barcodes = pyzbar.decode(frame)
-            else:   self.spacingCounter+=1
-
-            for barcode in self.barcodes:
-                # printing highlight of found barcodes
-                (x,y,width,height) = barcode.rect
-                cv2.rectangle(frame, (x, y), (x + width, y + height), (0, 0, 255), 4)
-                barcodeData = barcode.data.decode("utf-8")
-                barcodeType = barcode.type
-
-            if self.barcodes:
-                Thread(target=lambda:playsound(BEEP_SOUND_PATH)).run()
-
-                self.top.productManagerFrame.setBarcode(
-                    self.barcodes[0].data.decode("utf-8")
-                )
-                self.newProduct = False
-
-        if ret:
-            # setting up preview
-            rgbImage = cv2.resize(
-                cv2.cvtColor(frame, cv2.COLOR_BGR2RGB),
-                (self.label.width(), self.label.height())
-            )
-            
-            h, w, ch = rgbImage.shape
-            bytesPerLine = ch * w
-            # per interval we switch image from the camera
-            self.label.setPixmap(QPixmap.fromImage(
-                QImage(rgbImage.data, w, h, bytesPerLine, QImage.Format_RGB888)
-                    .scaled(self.label.width(), self.label.height(), Qt.KeepAspectRatio)
-            ))
-        else: print("lost connection")
-
-        
-
-    def takePicture(self):  self.pictureRequest = True
+    def takePicture(self):  
+        CameraPreviewThread.pictureRequest = True
 
     
     def noDeviceDialog(self):
@@ -115,4 +145,8 @@ class CameraDisplayFrame(QFrame):
 
     def setup(self):
         pass
+
+    def turnOffCamera(self):
+        self.cameraThread.requestInterruption()
+        self.cameraThread.wait()
 

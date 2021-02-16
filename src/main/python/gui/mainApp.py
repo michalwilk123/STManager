@@ -116,3 +116,11 @@ class UiMainWindow(object):
     
     def getCameraIndex(self):
         return 0
+
+    
+    def cleanUp(self):
+        """
+        Operations connected to signal aboutToQuit from QApplication
+        """
+        self.cameraDisplayFrame.turnOffCamera()
+        return 0
