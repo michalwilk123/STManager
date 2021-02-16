@@ -1,3 +1,4 @@
+from __future__ import annotations
 from PyQt5.QtWidgets import QFrame, QPushButton, QWidget, \
     QTextEdit, QScrollArea, QLabel, QVBoxLayout, QSizePolicy
 from PyQt5.QtCore import QCoreApplication, QRect, Qt
@@ -33,6 +34,30 @@ class ProductManagerFrame(QFrame):
         )
 
 
+    def getScrollArea(self) -> ScrollPreviewComponent:
+        return self.scrollArea
+
 
     def setup(self):
         pass
+
+
+    def cancelButtonClicked(self):
+        pass
+
+
+    def confirmButtonClicked(self):
+        pass
+
+
+    def setBarcode(self,barcode:str): self.productBarcode.setText(barcode)
+    
+    def setDescription(self,desc:str):  self.productDescription.setText(desc)
+
+
+    def getAllData():
+        pass
+
+    def setNewData(data):
+
+

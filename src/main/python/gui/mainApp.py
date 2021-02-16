@@ -1,10 +1,12 @@
 from PyQt5.QtCore import QRect, QMetaObject, QCoreApplication 
 from PyQt5.QtWidgets import QWidget, QFrame, QScrollArea, \
     QPushButton, QAction, QMenu, QApplication, QMainWindow, \
-    QStatusBar, QTextEdit, QMenuBar
+    QStatusBar, QTextEdit, QMenuBar, QLabel
 from gui.productManager import ProductManagerFrame
 from gui.settingsButtons import SettingsButtonsFrame
 from gui.cameraDisplay import CameraDisplayFrame
+from utils.User import User
+import utils.AppDataController as adc
 import pathlib
 
 
@@ -12,7 +14,10 @@ class UiMainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1100, 700)
-        self.username = "defaultUser"
+        configuration = adc.getConfiguration()
+        self.saveDestination = configuration["savePath"]
+        self.user = User(self, configuration["loggedUser"], self.saveDestination)
+        self.scannerMode = configuration["scanner_mode"]
 
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -41,9 +46,13 @@ class UiMainWindow(object):
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
         self.statusbar.setFixedHeight(20)
-        # self.statusbar.setStyleSheet(
-        #     "background-color:white;"
-        # )
+        self.statusbar.setStyleSheet(
+            "font-size: 10px;"
+        )
+
+        self.statusInfo = QLabel(f"Logged as user {self.user.getUsername()}")
+        self.statusInfo.setGeometry(QRect(0,0,20,20))
+        self.statusbar.addWidget(self.statusInfo)
 
         # Actions choices
         self.selectFolderAction = QAction(MainWindow)
@@ -105,7 +114,7 @@ class UiMainWindow(object):
 
     
     def getPhotoDestinationPath(self):
-        return pathlib.Path().absolute()
+        return self.saveDestination
 
     
     def setup(self):
@@ -120,7 +129,10 @@ class UiMainWindow(object):
     
     def cleanUp(self):
         """
-        Operations connected to signal aboutToQuit from QApplication
+        Slot connected to signal aboutToQuit from QApplication
         """
         self.cameraDisplayFrame.turnOffCamera()
         return 0
+
+    def getCurrentUser(self) -> User:
+        return self.user

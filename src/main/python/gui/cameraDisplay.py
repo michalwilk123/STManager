@@ -17,18 +17,18 @@ class CameraPreviewThread(QThread):
     ms_per_frame = int((1 / FRAME_RATE) * 1000)
     pictureRequest = False
 
-    def __init__(self, parent, top:UiMainWindow, width:int, 
-        height:int, user:str="Anonim",
+    def __init__(self, parent, width:int, 
+        height:int, 
         save_seq:int=1, camera_name:str="None", deviceNum:int=0):
         super().__init__(parent)
         CameraPreviewThread.__save_seq = save_seq
         CameraPreviewThread.camera_name = camera_name
-        CameraPreviewThread.user = user
         CameraPreviewThread.deviceNum = deviceNum
-        CameraPreviewThread.top = top
         CameraPreviewThread.width = width
         CameraPreviewThread.height = height
 
+    @staticmethod
+    def getLastPath() -> str: return CameraPreviewThread.currentPath
 
     def run(self):
         cap = cv2.VideoCapture(CameraPreviewThread.deviceNum)
@@ -40,20 +40,8 @@ class CameraPreviewThread(QThread):
             ret, frame = cap.read()
 
             if CameraPreviewThread.pictureRequest:
-                path = CameraPreviewThread.top.getPhotoDestinationPath()
-                timestamp = time.strftime("%d-%m-%Y-%H_%M_%S")
-                print(path)
 
-                cv2.imwrite(
-                    os.path.join(
-                        path, "%s-%04d-%s.jpg" % (
-                            CameraPreviewThread.user,
-                            CameraPreviewThread.__save_seq,
-                            timestamp
-                        )
-                    ),
-                    frame
-                )
+                cv2.imwrite(CameraPreviewThread.currentPath, frame)
                 CameraPreviewThread.__save_seq += 1
                 CameraPreviewThread.pictureRequest = False
 
@@ -121,8 +109,8 @@ class CameraDisplayFrame(QFrame):
         self.label = QLabel(self)
         self.label.setGeometry(QRect(0, 0, self.width(), self.height()))
 
-        self.cameraThread = CameraPreviewThread(self, self.top, \
-            self.width(), self.height()
+        self.cameraThread = CameraPreviewThread(
+            self, self.width(), self.height()
         )
         self.cameraThread.change_pixmap.connect(
             self.setImage
@@ -135,7 +123,17 @@ class CameraDisplayFrame(QFrame):
         self.label.setPixmap(QPixmap.fromImage(image))
 
 
-    def takePicture(self):  
+    def takePicture(self, savePath:str, username:str="Anonim"):  
+        timestamp = time.strftime("%d-%m-%Y-%H_%M_%S")
+        CameraPreviewThread.currentPath = os.path.join(
+                savePath,
+                "%s-%04d-%s.jpg" % (
+                CameraPreviewThread.user,
+                CameraPreviewThread.__save_seq,
+                timestamp
+            )
+        )
+        CameraPreviewThread.user = username
         CameraPreviewThread.pictureRequest = True
 
     

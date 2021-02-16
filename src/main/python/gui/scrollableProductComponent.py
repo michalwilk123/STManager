@@ -28,12 +28,17 @@ class ScrollPreviewComponent(QFrame):
         self.vLayout.addSpacerItem(self.spacer)
         self.scroll.setWidget(self.scrollContents)
 
-        for i in range(10):
+        for i in range(1):
             self.addItemPreview("ndjksabjkdsbjkabdj{}".format(i), "dbsajbdhsa")
 
     def addItemPreview(self, description:str, imgPath:str):
         ip = ItemPreviewComponent(self, description, imgPath)
         self.vLayout.insertWidget(0, ip)
+
+    
+    def clearAll(self):
+        while(item := self.vLayout.takeAt(0)):
+            self.vLayout.removeWidget(item)
 
 
 
@@ -76,6 +81,7 @@ class ItemPreviewComponent(QFrame):
         self.delSeparator.setFrameShadow(QFrame.Sunken)
 
         self.setFrameStyle(QFrame.StyledPanel)
+
 
     def delButtonClicked(self):
         ItemPreviewComponent.parent.vLayout.removeWidget(self)
