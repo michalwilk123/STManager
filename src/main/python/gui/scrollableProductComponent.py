@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import QFrame, QPushButton, QLabel, QSizePolicy, QScrollAre
     QVBoxLayout, QSpacerItem, QWidget
 from PyQt5.QtCore import QRect, Qt, QMetaObject, QSize
 from PyQt5.QtGui import QPixmap
+from utils.DialogCollection import errorOccured
 import typing
 
 
@@ -27,19 +28,21 @@ class ScrollPreviewComponent(QFrame):
         self.vLayout = QVBoxLayout(self.scrollContents)
         self.vLayout.addSpacerItem(self.spacer)
         self.scroll.setWidget(self.scrollContents)
+        self.itemPreviewList = []
 
-        for i in range(1):
-            self.addItemPreview("ndjksabjkdsbjkabdj{}".format(i), "dbsajbdhsa")
 
     def addItemPreview(self, description:str, imgPath:str):
         ip = ItemPreviewComponent(self, description, imgPath)
         self.vLayout.insertWidget(0, ip)
+        self.itemPreviewList.append(ip)
 
     
     def clearAll(self):
-        while(item := self.vLayout.takeAt(0)):
-            self.vLayout.removeWidget(item)
-
+        while self.itemPreviewList:
+            self.vLayout.removeWidget(
+                self.itemPreviewList[0]
+            )
+            self.itemPreviewList.pop(0)
 
 
 class ItemPreviewComponent(QFrame):
@@ -50,6 +53,7 @@ class ItemPreviewComponent(QFrame):
             ItemPreviewComponent.parent = parent
 
         self.setFixedSize(QSize(300,80))
+        self.imgPath = imgPath
         self.label = QLabel(description, self)
         self.label.setGeometry(QRect(110,10,160,60))
         self.label.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignTop)
@@ -71,9 +75,20 @@ class ItemPreviewComponent(QFrame):
         self.thbSeparator.setFrameShape(QFrame.VLine)
         self.thbSeparator.setFrameShadow(QFrame.Sunken)
 
-        self.thbLabel = QLabel("", self)
+        self.thbLabel = QLabel("ERROR LOADING FILE", self)
         self.thbLabel.setGeometry(QRect(10, 10, 80, 60))
-        self.thbLabel.setStyleSheet("background-color: rgb(255, 255, 255);")
+        self.thbLabel.setStyleSheet("background-color: rgb(255, 255, 255);color:black;")
+        self.thbLabel.setWordWrap(True)
+
+        # imgPath = "/home/michal/Programming/python/barcode/temp/panieboze.jpg"
+        pixmap = QPixmap()
+        print(imgPath)
+        if pixmap.load(imgPath):
+            self.thbLabel.setPixmap(
+                pixmap.scaled(80,60, Qt.IgnoreAspectRatio, Qt.FastTransformation)
+            )
+        else: print("Error with fetching the image")
+        # TODO: Tutaj trzeba dodać podpinanie miniatury do komponentu
 
         self.delSeparator = QFrame(self)
         self.delSeparator.setGeometry(QRect(250,10,5,60))
@@ -85,7 +100,15 @@ class ItemPreviewComponent(QFrame):
 
     def delButtonClicked(self):
         ItemPreviewComponent.parent.vLayout.removeWidget(self)
+        ItemPreviewComponent.parent.itemPreviewList.remove(self)
+
+        from os import remove, path
+        if path.exists(self.imgPath):
+            remove(self.imgPath) # deleting selected file
+        else: errorOccured("Image does not exist anymore!!")
+
         # TODO: tutaj dodac usuwanie zdjec z bazy oraz z folderu uzytkownika
+        # TODO: tutaj skończyłem i nie działa usuwanie zdjec
         print("eluwina")
 
 

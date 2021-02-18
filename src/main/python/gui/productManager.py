@@ -1,6 +1,6 @@
 from __future__ import annotations
 from PyQt5.QtWidgets import QFrame, QPushButton, QWidget, \
-    QTextEdit, QScrollArea, QLabel, QVBoxLayout, QSizePolicy
+    QTextEdit, QScrollArea, QLabel, QVBoxLayout, QSizePolicy, QLineEdit
 from PyQt5.QtCore import QCoreApplication, QRect, Qt
 from gui.scrollableProductComponent import ScrollPreviewComponent
 
@@ -15,8 +15,8 @@ class ProductManagerFrame(QFrame):
 
         self.scrollArea = ScrollPreviewComponent(self)
 
-        self.productBarcode = QTextEdit(self)
-        self.productBarcode.setGeometry(QRect(10, 340, 310, 40))
+        self.productBarcode = QLineEdit(self)
+        self.productBarcode.setGeometry(QRect(10, 340, 310, 30))
 
         self.productDescription = QTextEdit(self)
         self.productDescription.setGeometry(QRect(10, 390, 310, 180))
@@ -53,11 +53,3 @@ class ProductManagerFrame(QFrame):
     def setBarcode(self,barcode:str): self.productBarcode.setText(barcode)
     
     def setDescription(self,desc:str):  self.productDescription.setText(desc)
-
-
-    def getAllData():
-        pass
-
-    def setNewData(data):
-
-

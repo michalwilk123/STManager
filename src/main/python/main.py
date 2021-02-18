@@ -4,9 +4,7 @@ from PyQt5.QtWidgets import QMainWindow, QApplication
 if __name__ == "__main__":
     import sys
     app = QApplication(sys.argv)
-    MainWindow = QMainWindow()
-    ui = UiMainWindow()
-    app.aboutToQuit.connect(ui.cleanUp)
-    ui.setupUi(MainWindow)
+    MainWindow = UiMainWindow()
+    app.aboutToQuit.connect(MainWindow.cleanUp)
     MainWindow.show()
     sys.exit(app.exec_())

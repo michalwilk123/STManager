@@ -13,17 +13,17 @@ class SettingsButtonsFrame(QFrame):
         self.photoButton = QPushButton(self, text="Photo")
         self.photoButton.setGeometry(QRect(10, 10, 140, 40))
 
-        self.showProductsButton = QPushButton(self, text="Products")
-        self.showProductsButton.setGeometry(QRect(160, 10, 140, 40))
+        self.showProductsButton = QPushButton(self, text="Search Products")
+        self.showProductsButton.setGeometry(QRect(155, 10, 140, 40))
 
         self.changeUserButton = QPushButton(self, text="Switch User")
-        self.changeUserButton.setGeometry(QRect(310, 10, 140, 40))
+        self.changeUserButton.setGeometry(QRect(300, 10, 140, 40))
 
-        self.switchDeviceButton = QPushButton(self, text="Scanner Mode")
-        self.switchDeviceButton.setGeometry(QRect(460, 10, 140, 40))
+        self.prevProductButton = QPushButton(self, text="Previous")
+        self.prevProductButton.setGeometry(QRect(445, 10, 140, 40))
 
+        self.nextProductButton = QPushButton(self, text="Next")
+        self.nextProductButton.setGeometry(QRect(590, 10, 140, 40))
 
-    def setup(self):
-        self.photoButton.clicked.connect(
-            self.top.cameraDisplayFrame.takePicture
-        )
+    def setup(self):    
+        pass

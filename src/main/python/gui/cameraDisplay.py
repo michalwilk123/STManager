@@ -21,7 +21,7 @@ class CameraPreviewThread(QThread):
         height:int, 
         save_seq:int=1, camera_name:str="None", deviceNum:int=0):
         super().__init__(parent)
-        CameraPreviewThread.__save_seq = save_seq
+        CameraPreviewThread._save_seq = save_seq
         CameraPreviewThread.camera_name = camera_name
         CameraPreviewThread.deviceNum = deviceNum
         CameraPreviewThread.width = width
@@ -42,7 +42,7 @@ class CameraPreviewThread(QThread):
             if CameraPreviewThread.pictureRequest:
 
                 cv2.imwrite(CameraPreviewThread.currentPath, frame)
-                CameraPreviewThread.__save_seq += 1
+                CameraPreviewThread._save_seq += 1
                 CameraPreviewThread.pictureRequest = False
 
         
@@ -99,7 +99,8 @@ class CameraDisplayFrame(QFrame):
         self.setFrameShape(QFrame.StyledPanel)
         self.setFrameShadow(QFrame.Raised)
         self.setObjectName("cameraDisplayFrame")
-        self.initUI()
+        # UNCOMMENT BELOW COMMENT FOR CAMERA OUTPUT
+        # self.initUI() 
 
 
     def initUI(self):
@@ -128,8 +129,8 @@ class CameraDisplayFrame(QFrame):
         CameraPreviewThread.currentPath = os.path.join(
                 savePath,
                 "%s-%04d-%s.jpg" % (
-                CameraPreviewThread.user,
-                CameraPreviewThread.__save_seq,
+                username,
+                CameraPreviewThread._save_seq,
                 timestamp
             )
         )

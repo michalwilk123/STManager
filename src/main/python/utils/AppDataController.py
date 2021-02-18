@@ -16,18 +16,12 @@ def createNewUser(username:str, password:str):
       "username" : username,
       "password" : password,
       "created" : time.strftime("%d-%m-%Y-%H_%M_%S"),
-      "items" : [
-        {
-          "index" : 0,
-          "filenames" : [],
-          "id" : "",
-          "descr" : "",
-          "tags" : [],
-          "creation_date" : "",
-          "last_updated" : ""
-        },
-      ]
+      "items" : [createNullProduct(0)]
     }
+    data = getAllData()
+    data["userData"].append(userEntry)
+    setNewData(data)
+
 
 def findProducts(id:str=None, phrase:str=None, timeFrom:str=None, 
     timeTo:str=None, tags:List[str]=None, username:str=None):
@@ -39,8 +33,22 @@ def findProducts(id:str=None, phrase:str=None, timeFrom:str=None,
     tags - get products with given tags, only needs to match one
     user - get products made by user with given username
     """
-    # TODO : do this function later, this will get pretty complicated
-    return []
+    # TODO : matching beetween time intervals left
+    data = getAllData()["userData"]
+    if username:    
+        data = next(filter(lambda x:x["username"]==username, data))
+
+    
+    data = data["items"]
+
+    if tags:
+        # looking for any element in intersection of tags
+        data = filter(lambda x: bool([el for el in tags if el in x["tags"]]))
+
+    if phrase:
+        data = filter(lambda x: phrase in x["desc"])
+
+    return list(data)
 
 
 def checkForCredentials(username:str, password:str) -> bool:
