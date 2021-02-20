@@ -13,8 +13,7 @@ class AppController:
 
         self.productList = next(filter(
             lambda x: x["username"]==self.username, data["userData"]
-        ))
-        print(self.productList)
+        ))["items"]
         self.itemCursor = len(self.productList) - 1
         self.view = view
         self.changesMade = False
@@ -26,7 +25,12 @@ class AppController:
         from PyQt5.QtMultimedia import QCameraInfo
         return [c.description() for c in QCameraInfo.availableCameras()]
 
-    def getScannerMode(self): return self.view.scanner_mode
+    def getScannerMode(self): return self.scannerMode
+
+    def toggleScannerMode(self): 
+        self.scannerMode = not self.scannerMode
+        self.view.cameraDisplayFrame.setScannerMode(self.scannerMode)
+        self.changesMade = True
 
     def getUsername(self) -> str: return self.username
 
@@ -102,7 +106,6 @@ class AppController:
         """
         Fetch data for next product of the list
         """
-        print("next photo")
         self._updateProductJson()
         if self.itemCursor == len(self.productList) - 1:
             if self.view.productManagerFrame.getBarcode() != "":
@@ -117,7 +120,6 @@ class AppController:
         """
         switch view to previous product from the productList
         """
-        print("previoous photo")
         self._updateProductJson()
         self.itemCursor = 0 if self.itemCursor == 0 else self.itemCursor - 1 
         self._updateProductView()
@@ -135,16 +137,15 @@ class AppController:
     def _updateProductJson(self):
         if not self.changesMade: 
             return
-            print("aktualizujemy dane w pliku json")
 
         data = adc.getAllData()
         for userData in data["userData"]:
             if userData["username"] == self.username:
                 userData["items"] = self.productList
 
-        data["loggedUser"] = self.username
-        data["scanner_mode"] = self.scannerMode
-        data["savePath"] = self.savePath
+        data["configuration"]["loggedUser"] = self.username
+        data["configuration"]["scanner_mode"] = self.scannerMode
+        data["configuration"]["savePath"] = self.savePath
         adc.setNewData(data)
         self.changesMade = False
 
@@ -161,6 +162,8 @@ class AppController:
 
         self.view.productManagerFrame.setBarcode(product["id"])
         self.view.productManagerFrame.setDescription(product["desc"])
+        self.view.productManagerFrame.productBarcode.setFocus()
+        CameraPreviewThread.newProduct = True    
 
 
     def _newProduct(self):

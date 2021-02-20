@@ -41,7 +41,6 @@ class UiMainWindow(QMainWindow):
 
         # Actions choices
         self.selectFolderAction = QAction(parent=self, text="Select Folder")
-        self.themeAction = QAction(parent=self, text="Theme")
         self.showProductsAction = QAction(parent=self, text="Show products (S)")
         self.photoAction = QAction(parent=self, text="Photo (P)")
         self.selectCameraAction = QAction(parent=self, text="Change camera")
@@ -52,7 +51,6 @@ class UiMainWindow(QMainWindow):
         self.scannerModeAction.setCheckable(True)
 
         self.settingsMenu.addAction(self.selectFolderAction)
-        self.settingsMenu.addAction(self.themeAction)
         self.settingsMenu.addAction(self.selectCameraAction)
         self.settingsMenu.addAction(self.scannerModeAction)
         self.applicationMenu.addAction(self.showProductsAction)
@@ -76,10 +74,9 @@ class UiMainWindow(QMainWindow):
     
     def setup(self):
         self.controller = AppController(self)
-        self.scannerMode = 
         self.productManagerFrame.setup()
         self.settingButtonsFrame.setup()
-        self.cameraDisplayFrame.setup()
+        self.cameraDisplayFrame.setup(self.controller.getScannerMode())
         self.updateStatusbar()
 
         # connecting ui buttons signals
@@ -104,18 +101,21 @@ class UiMainWindow(QMainWindow):
         self.settingButtonsFrame.prevProductButton.clicked.connect(
             self.controller.previousProduct
         )
+        self.productManagerFrame.productBarcode.returnPressed.connect(
+            self.controller.takePhoto
+        )
 
         # connecting actions buttons singals
         self.selectFolderAction.triggered.connect(self.controller.changeSaveUrl)
-        self.themeAction.triggered.connect(lambda: print("cxznbcmxz"))
         self.showProductsAction.triggered.connect(self.searchProducts)
         self.photoAction.triggered.connect(self.controller.takePhoto)
         self.selectCameraAction.triggered.connect(self.showCameraChoice)
         self.changeUserAction.triggered.connect(self.controller.switchUser)
         self.createUserAction.triggered.connect(createAccout)
         self.authorAction.triggered.connect(showInfo)
+        self.scannerModeAction.triggered.connect(self.controller.toggleScannerMode)
         
-        if self.scannerMode:
+        if self.controller.getScannerMode():
             self.scannerModeAction.setChecked(True)
         
 
@@ -143,6 +143,9 @@ class UiMainWindow(QMainWindow):
 
     def getController(self) -> AppController:   return self.controller
 
-    def searchProducts(self):   print("tutaj powinno sie wyswietlic okno z wyborem produktu")
+    def searchProducts(self):   
+        from utils.ProductSearcher import ProductSearcher
+        p = ProductSearcher(self.controller)
+        p.exec()
 
     def showCameraChoice(self): self.cameraChoice = cameraChoice()

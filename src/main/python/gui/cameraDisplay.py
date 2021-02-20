@@ -18,8 +18,8 @@ class CameraPreviewThread(QThread):
     pictureRequest = False
 
     def __init__(self, parent:CameraDisplayFrame, 
-        width:int, height:int, 
-        save_seq:int=1, camera_name:str="None", deviceNum:int=0):
+        width:int, height:int, scannerMode:bool=True, 
+        save_seq:int=1, camera_name:str="None", deviceNum:int=None):
         super().__init__(parent)
         CameraPreviewThread.top = parent
         CameraPreviewThread._save_seq = save_seq
@@ -27,17 +27,19 @@ class CameraPreviewThread(QThread):
         CameraPreviewThread.deviceNum = deviceNum
         CameraPreviewThread.width = width
         CameraPreviewThread.height = height
+        CameraPreviewThread.scannerMode = scannerMode
+        CameraPreviewThread.newProduct = True
+
 
     @staticmethod
     def getLastPath() -> str: return CameraPreviewThread.currentPath
 
     def run(self):
         cap = cv2.VideoCapture(CameraPreviewThread.deviceNum)
-        newProduct = True
         spacingCounter = 0
         barcodes = []
 
-        while not self.isInterruptionRequested():
+        while not self.isInterruptionRequested() or deviceNum != None:
             ret, frame = cap.read()
 
             if CameraPreviewThread.pictureRequest:
@@ -47,7 +49,7 @@ class CameraPreviewThread(QThread):
                 CameraPreviewThread.pictureRequest = False
 
         
-            if newProduct:
+            if CameraPreviewThread.newProduct and not CameraPreviewThread.scannerMode:
                 # if we already know product barcode, we stop scanning for better performance
                 if spacingCounter == FRAMES_BEETWEEN_SCANS and ret:
                     # looking for barcode in camera input
@@ -70,7 +72,9 @@ class CameraPreviewThread(QThread):
                         .productManagerFrame.setBarcode(
                             barcodes[0].data.decode("utf-8")
                     )
-                    newProduct = False
+                    CameraPreviewThread.newProduct = False
+                    barcodes = []
+                    CameraPreviewThread.top.top.controller.saveCurrentProduct()
 
             if ret:
                 rgbImage = cv2.resize(
@@ -114,13 +118,14 @@ class CameraDisplayFrame(QFrame):
         self.label.setGeometry(QRect(0, 0, self.width(), self.height()))
 
         self.cameraThread = CameraPreviewThread(
-            self, self.width(), self.height()
+            self, self.width(), self.height(), deviceNum=0
         )
         self.cameraThread.change_pixmap.connect(
             self.setImage
         )
         self.cameraThread.start()
 
+    def setScannerMode(self, mode:bool):    CameraPreviewThread.scannerMode = mode
 
     @pyqtSlot(QImage)
     def setImage(self, image):
@@ -145,11 +150,11 @@ class CameraDisplayFrame(QFrame):
 
     
     def noDeviceDialog(self):
-        print("no device detected")
+        from utils.DialogCollection import errorOccured
+        errorOccured("no device detected")
 
 
-    def setup(self):
-        pass
+    def setup(self, mode:bool):     CameraPreviewThread.scannerMode = mode
 
     def turnOffCamera(self):
         self.cameraThread.requestInterruption()
