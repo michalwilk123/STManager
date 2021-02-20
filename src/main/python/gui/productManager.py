@@ -19,7 +19,7 @@ class ProductManagerFrame(QFrame):
         self.productBarcode.setGeometry(QRect(10, 340, 310, 30))
 
         self.productDescription = QTextEdit(self)
-        self.productDescription.setGeometry(QRect(10, 390, 310, 180))
+        self.productDescription.setGeometry(QRect(10, 380, 310, 190))
 
         self.confirmButton = QPushButton(parent=self,text="Confirm")
         self.confirmButton.setGeometry(QRect(160, 580, 160, 50))
@@ -28,28 +28,12 @@ class ProductManagerFrame(QFrame):
         self.cancelButton.setGeometry(QRect(10, 580, 140, 50))
 
 
-    def setBarcode(self, text):
-        self.productBarcode.setText(
-            text
-        )
+    def getScrollArea(self) -> ScrollPreviewComponent:  return self.scrollArea
 
+    def setup(self):    pass
 
-    def getScrollArea(self) -> ScrollPreviewComponent:
-        return self.scrollArea
+    def setBarcode(self, text:str):     self.productBarcode.setText(text)
 
-
-    def setup(self):
-        pass
-
-
-    def cancelButtonClicked(self):
-        pass
-
-
-    def confirmButtonClicked(self):
-        pass
-
-
-    def setBarcode(self,barcode:str): self.productBarcode.setText(barcode)
-    
     def setDescription(self,desc:str):  self.productDescription.setText(desc)
+
+    def getBarcode(self) -> str: return self.productBarcode.text()

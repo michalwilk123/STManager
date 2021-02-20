@@ -9,9 +9,9 @@ import typing
 class ScrollPreviewComponent(QFrame):
     def __init__(self, top):
         super().__init__(top)
+        self.top = top
         self.resize(350, 330)
         self.setMaximumSize(QSize(350,330))
-        #self.setStyleSheet("background-color:white;")
         self.scroll = QScrollArea(self)
         self.scroll.setGeometry(QRect(0,0,330,330))
 
@@ -44,6 +44,9 @@ class ScrollPreviewComponent(QFrame):
             )
             self.itemPreviewList.pop(0)
 
+    def getLayout(self) -> QVBoxLayout:
+        return self.vLayout
+
 
 class ItemPreviewComponent(QFrame):
     parent:ScrollPreviewComponent = None
@@ -55,13 +58,13 @@ class ItemPreviewComponent(QFrame):
         self.setFixedSize(QSize(300,80))
         self.imgPath = imgPath
         self.label = QLabel(description, self)
-        self.label.setGeometry(QRect(110,10,160,60))
+        self.label.setGeometry(QRect(110,10,130,60))
         self.label.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignTop)
         self.label.setWordWrap(True)
 
         self.delButton = QPushButton(text="X", parent=self)
         self.delButton.setGeometry(QRect(260,10,30,60))
-        self.delButton.setStyleSheet("color: rgb(170, 0, 0);\n"
+        self.delButton.setStyleSheet("color: red;\n"
             "font: 81 10pt \"Open Sans\";\n"
             "font: 75 20pt \"Noto Sans\";"
         )
@@ -77,10 +80,9 @@ class ItemPreviewComponent(QFrame):
 
         self.thbLabel = QLabel("ERROR LOADING FILE", self)
         self.thbLabel.setGeometry(QRect(10, 10, 80, 60))
-        self.thbLabel.setStyleSheet("background-color: rgb(255, 255, 255);color:black;")
+        self.thbLabel.setStyleSheet("background-color: white;color:black;")
         self.thbLabel.setWordWrap(True)
 
-        # imgPath = "/home/michal/Programming/python/barcode/temp/panieboze.jpg"
         pixmap = QPixmap()
         print(imgPath)
         if pixmap.load(imgPath):
@@ -101,6 +103,7 @@ class ItemPreviewComponent(QFrame):
     def delButtonClicked(self):
         ItemPreviewComponent.parent.vLayout.removeWidget(self)
         ItemPreviewComponent.parent.itemPreviewList.remove(self)
+        ItemPreviewComponent.parent.top.top.controller.deletePhoto(self.imgPath)
 
         from os import remove, path
         if path.exists(self.imgPath):

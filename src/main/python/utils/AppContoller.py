@@ -4,40 +4,56 @@ import time
 
 
 class AppController:
-    def __init__(self, top, username:str, savePath:str):
-        """
-        Purpose of password is only user confirmation. NOT for security.
-        """
-        self.productList = adc.findProducts(username=username)
+    def __init__(self, view):
+        data = adc.getAllData()
+        self.username = data["configuration"]["loggedUser"]
+        self.uiTheme = data["configuration"]["theme"]
+        self.scannerMode = data["configuration"]["scanner_mode"]
+        self.savePath = data["configuration"]["savePath"]
+
+        self.productList = next(filter(
+            lambda x: x["username"]==self.username, data["userData"]
+        ))
+        print(self.productList)
         self.itemCursor = len(self.productList) - 1
-        self.username = username
-        self.top = top
-        self.savePath = savePath # this value decides where NEW photos will be stored
+        self.view = view
         self.changesMade = False
         self._updateProductView() # displaying current data
 
 
     @staticmethod
     def getCameraList():
-        return ["camera1", "camera2", "camera3"]
+        from PyQt5.QtMultimedia import QCameraInfo
+        return [c.description() for c in QCameraInfo.availableCameras()]
 
+    def getScannerMode(self): return self.view.scanner_mode
 
-    def getUsername(self): return self.username
+    def getUsername(self) -> str: return self.username
 
 
     def switchUser(self):
-        print("zmieniam uzytkownika")
+        from utils.DialogCollection import logUserIn, errorOccured
+        login, password = logUserIn()
+        if login == None:
+            return 
 
+        self.productList = adc.findProducts(username=login)
+        self.itemCursor = len(self.productList) - 1
+        self.username = login
+        self.view.updateStatusbar()
+        self._updateProductView() # displaying current data
+
+    def getNumOfProducts(self) -> int: return len(self.productList)
 
     def takePhoto(self):
         """
         Fetches data from app and saves photo in user selected directory
         """
-        self.top.cameraDisplayFrame.takePicture(self.savePath, self.username)
+        self.view.cameraDisplayFrame.takePicture(self.savePath, self.username)
         photoPath:str = CameraPreviewThread.getLastPath()
         photoName:str = photoPath.split("/")[-1]
         # adding newly taken photo to preview scrollbar
-        self.top.productManagerFrame.getScrollArea().addItemPreview(photoName, photoPath)
+        self.view.productManagerFrame.getScrollArea().addItemPreview(photoName, photoPath)
         self.productList[self.itemCursor]["filenames"].append(photoPath)
         self.changesMade = True
 
@@ -54,14 +70,21 @@ class AppController:
 
 
     def saveCurrentProduct(self):
-        self.productList[self.itemCursor]["id"] = self.top\
+        """
+        When you click this, information will be saved even if you
+        prematuraly close the app.
+        """
+        self.productList[self.itemCursor]["id"] = self.view\
             .productManagerFrame.productBarcode.text()
-        self.productList[self.itemCursor]["desc"] = self.top\
+        self.productList[self.itemCursor]["desc"] = self.view\
             .productManagerFrame.productDescription.toPlainText()
         self.changesMade = True
 
 
     def deleteCurrentProduct(self):
+        """
+        deletes only INFO in json, photos ARE STAYING IN
+        """
         if len(self.productList) == 1:
             self.productList = [adc.createNullProduct(0)]
             self.itemCursor = 0
@@ -70,7 +93,9 @@ class AppController:
             self._updateProductView()
         else:
             self.changesMade = False
+            cursor = self.itemCursor
             self.previousProduct()
+            self.productList.pop(cursor)
 
 
     def nextProduct(self):
@@ -80,7 +105,7 @@ class AppController:
         print("next photo")
         self._updateProductJson()
         if self.itemCursor == len(self.productList) - 1:
-            if self.productList[-1]["id"] != "":
+            if self.view.productManagerFrame.getBarcode() != "":
                 self._newProduct()
             else:
                 self.itemCursor = 0
@@ -98,11 +123,9 @@ class AppController:
         self._updateProductView()
 
 
-    def changeSaveUrl(self, newPath):   self.savePath = newPath
-
-
-    def logout(self):
-        pass
+    def changeSaveUrl(self, newPath:str):   
+        from utils.DialogCollection import getFolderPath
+        self.savePath = getFolderPath()
 
 
     def cleanUp(self):
@@ -119,22 +142,25 @@ class AppController:
             if userData["username"] == self.username:
                 userData["items"] = self.productList
 
+        data["loggedUser"] = self.username
+        data["scanner_mode"] = self.scannerMode
+        data["savePath"] = self.savePath
         adc.setNewData(data)
         self.changesMade = False
 
 
     def _updateProductView(self):
-        self.top.productManagerFrame.getScrollArea().clearAll()
+        self.view.productManagerFrame.getScrollArea().clearAll()
         product = self.productList[self.itemCursor]
 
         # setting up previews for all photos
         for path in product["filenames"]:
-            self.top.productManagerFrame.getScrollArea().addItemPreview(
+            self.view.productManagerFrame.getScrollArea().addItemPreview(
                 path.split("/")[-1], path
             )
 
-        self.top.productManagerFrame.setBarcode(product["id"])
-        self.top.productManagerFrame.setDescription(product["desc"])
+        self.view.productManagerFrame.setBarcode(product["id"])
+        self.view.productManagerFrame.setDescription(product["desc"])
 
 
     def _newProduct(self):

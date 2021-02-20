@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QRect, QMetaObject, QCoreApplication 
+from PyQt5.QtCore import QRect, QMetaObject, QCoreApplication, Qt
 from PyQt5.QtWidgets import QWidget, QFrame, QScrollArea, \
     QPushButton, QAction, QMenu, QApplication, QMainWindow, \
     QStatusBar, QTextEdit, QMenuBar, QLabel
@@ -7,24 +7,15 @@ from gui.settingsButtons import SettingsButtonsFrame
 from gui.cameraDisplay import CameraDisplayFrame
 from utils.AppContoller import AppController
 import utils.AppDataController as adc
+from utils.DialogCollection import showInfo, cameraChoice, createAccout
 import pathlib
 
 
 class UiMainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, forceRestart:bool=False):
         super().__init__()
         self.resize(1100, 700)
-
-        from utils.DialogCollection import logUserIn, createAccout, \
-            showInfo, cameraChoice, getFolderPath
-        # l, p = logUserIn()
-        # l, p = createAccout()
-        # showInfo()
-        # c = cameraChoice()
-        # print(c)
-        # c = getFolderPath()
-        # print(c)
-        # print(f"login: {l}\npassword: {p}")
+        self.cameraChoice = 0
 
         self.centralwidget = QWidget(self)
         self.productManagerFrame = ProductManagerFrame(self)
@@ -42,36 +33,33 @@ class UiMainWindow(QMainWindow):
         self.statusbar = QStatusBar(self)
         self.setStatusBar(self.statusbar)
         self.statusbar.setFixedHeight(20)
-        self.statusbar.setStyleSheet(
-            "font-size: 10px;"
-        )
+        self.statusbar.setStyleSheet("font-size: 10px;")
 
-        self.statusInfo = QLabel()
-        self.statusInfo.setGeometry(QRect(0,0,20,20))
-        self.statusbar.addWidget(self.statusInfo)
+        self.statusUser = QLabel()
+        self.statusUser.setGeometry(QRect(0,0,20,20))
+        self.statusbar.addWidget(self.statusUser)
 
         # Actions choices
         self.selectFolderAction = QAction(parent=self, text="Select Folder")
-        self.historyAction = QAction(parent=self, text="History")
         self.themeAction = QAction(parent=self, text="Theme")
         self.showProductsAction = QAction(parent=self, text="Show products (S)")
-        self.nextProductAction = QAction(parent=self, text="Next product (N)")
         self.photoAction = QAction(parent=self, text="Photo (P)")
-        self.importDbAction = QAction(parent=self, text="Import database")
+        self.selectCameraAction = QAction(parent=self, text="Change camera")
         self.changeUserAction = QAction(parent=self, text="Change user")
+        self.createUserAction = QAction(parent=self, text="Create new user")
         self.authorAction = QAction(parent=self, text="Author")
-        self.contactAction = QAction(parent=self, text="Contact")
+        self.scannerModeAction = QAction(parent=self, text="Scanner mode")
+        self.scannerModeAction.setCheckable(True)
 
         self.settingsMenu.addAction(self.selectFolderAction)
-        self.settingsMenu.addAction(self.historyAction)
         self.settingsMenu.addAction(self.themeAction)
-        self.settingsMenu.addAction(self.importDbAction)
+        self.settingsMenu.addAction(self.selectCameraAction)
+        self.settingsMenu.addAction(self.scannerModeAction)
         self.applicationMenu.addAction(self.showProductsAction)
-        self.applicationMenu.addAction(self.nextProductAction)
         self.applicationMenu.addAction(self.photoAction)
         self.applicationMenu.addAction(self.changeUserAction)
+        self.applicationMenu.addAction(self.createUserAction)
         self.aboutMenu.addAction(self.authorAction)
-        self.aboutMenu.addAction(self.contactAction)
         self.menubar.addAction(self.applicationMenu.menuAction())
         self.menubar.addAction(self.settingsMenu.menuAction())
         self.menubar.addAction(self.aboutMenu.menuAction())
@@ -83,16 +71,16 @@ class UiMainWindow(QMainWindow):
     def getPhotoDestinationPath(self):
         return self.saveDestination
 
+    def updateStatusbar(self):
+        self.statusUser.setText(f"Logged as user {self.controller.getUsername()}")
     
     def setup(self):
-        configuration = adc.getConfiguration()
-        self.saveDestination = configuration["savePath"]
-        self.controller = AppController(self, configuration["loggedUser"], self.saveDestination)
-        self.scannerMode = configuration["scanner_mode"]
+        self.controller = AppController(self)
+        self.scannerMode = 
         self.productManagerFrame.setup()
         self.settingButtonsFrame.setup()
         self.cameraDisplayFrame.setup()
-        self.statusInfo.setText(f"Logged as user {self.controller.getUsername()}")
+        self.updateStatusbar()
 
         # connecting ui buttons signals
         self.productManagerFrame.confirmButton.clicked.connect(
@@ -101,12 +89,11 @@ class UiMainWindow(QMainWindow):
         self.productManagerFrame.cancelButton.clicked.connect(
             self.controller.deleteCurrentProduct
         )
-
         self.settingButtonsFrame.photoButton.clicked.connect(
             self.controller.takePhoto
         )
         self.settingButtonsFrame.showProductsButton.clicked.connect(
-            lambda:print("tutaj powinno sie wyswietlic okno z wyborem produktu")
+            self.searchProducts
         )
         self.settingButtonsFrame.changeUserButton.clicked.connect(
             self.controller.switchUser
@@ -118,11 +105,32 @@ class UiMainWindow(QMainWindow):
             self.controller.previousProduct
         )
 
-    
-    def getCameraIndex(self):
-        return 0
+        # connecting actions buttons singals
+        self.selectFolderAction.triggered.connect(self.controller.changeSaveUrl)
+        self.themeAction.triggered.connect(lambda: print("cxznbcmxz"))
+        self.showProductsAction.triggered.connect(self.searchProducts)
+        self.photoAction.triggered.connect(self.controller.takePhoto)
+        self.selectCameraAction.triggered.connect(self.showCameraChoice)
+        self.changeUserAction.triggered.connect(self.controller.switchUser)
+        self.createUserAction.triggered.connect(createAccout)
+        self.authorAction.triggered.connect(showInfo)
+        
+        if self.scannerMode:
+            self.scannerModeAction.setChecked(True)
+        
 
+    def keyPressEvent(self, k):
+        key = k.key()
+        if key == Qt.Key_P:
+            self.controller.takePhoto()
+        elif key == Qt.Key_Enter:
+            self.controller.saveCurrentProduct()
+        elif key == Qt.Key_Delete:
+            self.controller.deleteCurrentProduct()
     
+
+    def setCameraIndex(self, i:int): self.cameraChoice = i
+
     def cleanUp(self):
         """
         Slot connected to signal aboutToQuit from QApplication
@@ -131,5 +139,10 @@ class UiMainWindow(QMainWindow):
         self.cameraDisplayFrame.turnOffCamera()
         return 0
 
-    def getController(self) -> AppController:
-        return self.controller
+    def getCameraIndex(self) -> int:    return self.cameraChoice
+
+    def getController(self) -> AppController:   return self.controller
+
+    def searchProducts(self):   print("tutaj powinno sie wyswietlic okno z wyborem produktu")
+
+    def showCameraChoice(self): self.cameraChoice = cameraChoice()

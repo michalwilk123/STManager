@@ -52,7 +52,14 @@ def findProducts(id:str=None, phrase:str=None, timeFrom:str=None,
 
 
 def checkForCredentials(username:str, password:str) -> bool:
-    return True
+    usrData = getAllData()["userData"]
+
+    for usr in usrData:
+        if usr["username"] == username and \
+            usr["password"] == password:
+            return True
+    return False
+
 
 def getConfiguration():
     with open(APP_DATA_PATH, "r") as dataFile:

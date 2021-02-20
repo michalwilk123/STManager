@@ -17,10 +17,11 @@ class CameraPreviewThread(QThread):
     ms_per_frame = int((1 / FRAME_RATE) * 1000)
     pictureRequest = False
 
-    def __init__(self, parent, width:int, 
-        height:int, 
+    def __init__(self, parent:CameraDisplayFrame, 
+        width:int, height:int, 
         save_seq:int=1, camera_name:str="None", deviceNum:int=0):
         super().__init__(parent)
+        CameraPreviewThread.top = parent
         CameraPreviewThread._save_seq = save_seq
         CameraPreviewThread.camera_name = camera_name
         CameraPreviewThread.deviceNum = deviceNum
@@ -62,10 +63,12 @@ class CameraPreviewThread(QThread):
                     barcodeType = barcode.type
 
                 if barcodes:
-                    Thread(target=lambda:playsound(BEEP_SOUND_PATH)).run()
+                    t = Thread(target=lambda:playsound(BEEP_SOUND_PATH))
+                    t.start()
 
-                    top.productManagerFrame.setBarcode(
-                        barcodes[0].data.decode("utf-8")
+                    CameraPreviewThread.top.top\
+                        .productManagerFrame.setBarcode(
+                            barcodes[0].data.decode("utf-8")
                     )
                     newProduct = False
 
@@ -100,7 +103,7 @@ class CameraDisplayFrame(QFrame):
         self.setFrameShadow(QFrame.Raised)
         self.setObjectName("cameraDisplayFrame")
         # UNCOMMENT BELOW COMMENT FOR CAMERA OUTPUT
-        # self.initUI() 
+        self.initUI() 
 
 
     def initUI(self):
@@ -136,6 +139,9 @@ class CameraDisplayFrame(QFrame):
         )
         CameraPreviewThread.user = username
         CameraPreviewThread.pictureRequest = True
+        # below we are wating 2 frames for the saving to take place
+        # after that we expect for the picture to be loaded correctly
+        QThread.msleep(CameraPreviewThread.ms_per_frame * 2)
 
     
     def noDeviceDialog(self):

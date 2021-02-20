@@ -11,12 +11,14 @@ def logUserIn():
     lDialog.exec()
     login = lDialog.loginText.text()
     password = lDialog.passText.text()
-    print(f"result code: {lDialog.result()}")
+    if lDialog.result() == 0: return None, None
     
     from utils.AppDataController import checkForCredentials
     if checkForCredentials(login, password):
         return login, password
-    else:   return None, None
+    else:   
+        errorOccured("This user does not exits")
+        return None, None
 
 
 def createAccout():
@@ -159,6 +161,11 @@ class CreateAccountDialog(QDialog):
         self.passText.setGeometry(QRect(80, 90, 170, 30))
         self.passText.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
 
+        self.passRepText = QLineEdit(self)
+        self.passRepText.setEchoMode(QLineEdit.Password)
+        self.passRepText.setGeometry(QRect(80,130,170,30))
+        self.passRepText.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+
         self.dialogButtons = QDialogButtonBox(self)
         self.dialogButtons.setGeometry(QRect(80, 170, 171, 35))
         self.dialogButtons.setStandardButtons(QDialogButtonBox.Cancel|QDialogButtonBox.Ok)
@@ -182,11 +189,6 @@ class CreateAccountDialog(QDialog):
         self.passRepLabel.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.passRepLabel.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignTop)
         self.passRepLabel.setWordWrap(True)
-
-        self.passRepText = QLineEdit(self)
-        self.passRepText.setEchoMode(QLineEdit.Password)
-        self.passRepText.setGeometry(QRect(80,130,170,30))
-        self.passRepText.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
 
         self.setWindowTitle("Create Account")
         self.dialogButtons.accepted.connect(lambda:self.done(1))
