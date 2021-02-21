@@ -39,7 +39,9 @@ class CameraPreviewThread(QThread):
         spacingCounter = 0
         barcodes = []
 
-        while not self.isInterruptionRequested() or deviceNum != None:
+        while not self.isInterruptionRequested() or\
+            CameraPreviewThread.deviceNum != None:
+
             ret, frame = cap.read()
 
             if CameraPreviewThread.pictureRequest:
@@ -92,7 +94,7 @@ class CameraPreviewThread(QThread):
                             Qt.KeepAspectRatio
                         )
                 )
-            else: print("lost connection")
+            else: CameraPreviewThread.deviceNum = None
             QThread.msleep(CameraPreviewThread.ms_per_frame)
 
 

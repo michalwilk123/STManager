@@ -57,7 +57,7 @@ def showInfo():
 
 
 def cameraChoice() -> int:
-    from utils.AppContoller import AppController
+    from utils.AppController import AppController
     camList = AppController.getCameraList()
     camDialog = CameraChooserDialog(camList)
     camDialog.exec()

@@ -5,13 +5,13 @@ from PyQt5.QtWidgets import QWidget, QFrame, QScrollArea, \
 from gui.productManager import ProductManagerFrame
 from gui.settingsButtons import SettingsButtonsFrame
 from gui.cameraDisplay import CameraDisplayFrame
-from utils.AppContoller import AppController
+from utils.AppController import AppController
 import utils.AppDataController as adc
 from utils.DialogCollection import showInfo, cameraChoice, createAccout
 import pathlib
 
 
-class UiMainWindow(QMainWindow):
+class AppView(QMainWindow):
     def __init__(self, forceRestart:bool=False):
         super().__init__()
         self.resize(1100, 700)

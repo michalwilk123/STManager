@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import (QDialog, QTableWidget,
     QHeaderView, QAbstractScrollArea)
 from PyQt5.QtCore import QRect, Qt
 from PyQt5.QtGui import QFont, QPixmap
-from utils.AppContoller import AppController
+from utils.AppController import AppController
 from utils.AppDataController import findProducts, getUsrList
 
 smallFont = QFont()
@@ -179,6 +179,7 @@ color: black;
                 Qt.FastTransformation
             )
         )
+
 
 
 class ProductTable(QScrollArea):

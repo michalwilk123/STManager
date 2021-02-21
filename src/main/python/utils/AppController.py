@@ -13,6 +13,11 @@ class AppController:
         self.productList = next(filter(
             lambda x: x["username"]==self.username, data["userData"]
         ))["items"]
+
+        if len(self.productList) == 0:
+            from utils.AppDataController import createNullProduct
+            self.productList = [createNullProduct(0)]
+
         self.itemCursor = len(self.productList) - 1
         self.view = view
         self.changesMade = False
@@ -33,12 +38,10 @@ class AppController:
 
     def getUsername(self) -> str: return self.username
 
-
     def switchUser(self):
         from utils.DialogCollection import logUserIn, errorOccured
         login, password = logUserIn()
-        if login == None:
-            return 
+        if login == None:   return 
 
         self.productList = adc.findProducts(username=login)
         self.itemCursor = len(self.productList) - 1
@@ -154,6 +157,7 @@ class AppController:
 
     def _updateProductView(self):
         self.view.productManagerFrame.getScrollArea().clearAll()
+
         product = self.productList[self.itemCursor]
 
         # setting up previews for all photos
