@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QFrame, QPushButton
-from PyQt5.QtCore import QCoreApplication, QRect
+from PyQt5.QtCore import QRect
+
 
 class SettingsButtonsFrame(QFrame):
     def __init__(self, top):
@@ -25,5 +26,5 @@ class SettingsButtonsFrame(QFrame):
         self.nextProductButton = QPushButton(self, text="Next")
         self.nextProductButton.setGeometry(QRect(590, 10, 140, 40))
 
-    def setup(self):    
+    def setup(self):
         pass

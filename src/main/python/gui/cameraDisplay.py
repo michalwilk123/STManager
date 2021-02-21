@@ -1,7 +1,6 @@
 from __future__ import annotations
-from PyQt5.QtWidgets import QFrame, QPushButton, QWidget, QLabel, QSizePolicy
-from PyQt5.QtCore import QCoreApplication, QRect, Qt, QThread, \
-    pyqtSlot, pyqtSignal
+from PyQt5.QtWidgets import QFrame, QLabel
+from PyQt5.QtCore import QRect, Qt, QThread, pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QImage, QPixmap
 from config.macros import FRAME_RATE, FRAMES_BEETWEEN_SCANS, BEEP_SOUND_PATH
 from pyzbar import pyzbar
@@ -17,9 +16,16 @@ class CameraPreviewThread(QThread):
     ms_per_frame = int((1 / FRAME_RATE) * 1000)
     pictureRequest = False
 
-    def __init__(self, parent:CameraDisplayFrame, 
-        width:int, height:int, scannerMode:bool=True, 
-        save_seq:int=1, camera_name:str="None", deviceNum:int=None):
+    def __init__(
+        self,
+        parent: CameraDisplayFrame,
+        width: int,
+        height: int,
+        scannerMode: bool = True,
+        save_seq: int = 1,
+        camera_name: str = "None",
+        deviceNum: int = None,
+    ):
         super().__init__(parent)
         CameraPreviewThread.top = parent
         CameraPreviewThread._save_seq = save_seq
@@ -30,49 +36,50 @@ class CameraPreviewThread(QThread):
         CameraPreviewThread.scannerMode = scannerMode
         CameraPreviewThread.newProduct = True
 
-
     @staticmethod
-    def getLastPath() -> str: return CameraPreviewThread.currentPath
+    def getLastPath() -> str:
+        return CameraPreviewThread.currentPath
 
     def run(self):
         cap = cv2.VideoCapture(CameraPreviewThread.deviceNum)
         spacingCounter = 0
         barcodes = []
 
-        while not self.isInterruptionRequested() or\
-            CameraPreviewThread.deviceNum != None:
+        while (
+            not self.isInterruptionRequested()
+            and CameraPreviewThread.deviceNum is not None
+        ):
 
             ret, frame = cap.read()
 
             if CameraPreviewThread.pictureRequest:
-
                 cv2.imwrite(CameraPreviewThread.currentPath, frame)
                 CameraPreviewThread._save_seq += 1
                 CameraPreviewThread.pictureRequest = False
 
-        
-            if CameraPreviewThread.newProduct and not CameraPreviewThread.scannerMode:
-                # if we already know product barcode, we stop scanning for better performance
+            if CameraPreviewThread.newProduct and\
+                    not CameraPreviewThread.scannerMode:
+
                 if spacingCounter == FRAMES_BEETWEEN_SCANS and ret:
                     # looking for barcode in camera input
-                    spacingCounter=0
+                    spacingCounter = 0
                     barcodes = pyzbar.decode(frame)
-                else:   spacingCounter+=1
+                else:
+                    spacingCounter += 1
 
                 for barcode in barcodes:
                     # printing highlight of found barcodes
-                    (x,y,width,height) = barcode.rect
-                    cv2.rectangle(frame, (x, y), (x + width, y + height), (0, 0, 255), 4)
-                    barcodeData = barcode.data.decode("utf-8")
-                    barcodeType = barcode.type
+                    (x, y, width, height) = barcode.rect
+                    cv2.rectangle(
+                        frame, (x, y), (x + width, y + height), (0, 0, 255), 4
+                    )
 
                 if barcodes:
-                    t = Thread(target=lambda:playsound(BEEP_SOUND_PATH))
+                    t = Thread(target=lambda: playsound(BEEP_SOUND_PATH))
                     t.start()
 
-                    CameraPreviewThread.top.top\
-                        .productManagerFrame.setBarcode(
-                            barcodes[0].data.decode("utf-8")
+                    CameraPreviewThread.top.top.productManagerFrame.setBarcode(
+                        barcodes[0].data.decode("utf-8")
                     )
                     CameraPreviewThread.newProduct = False
                     barcodes = []
@@ -81,36 +88,40 @@ class CameraPreviewThread(QThread):
             if ret:
                 rgbImage = cv2.resize(
                     cv2.cvtColor(frame, cv2.COLOR_BGR2RGB),
-                    (CameraPreviewThread.width, CameraPreviewThread.height)
+                    (CameraPreviewThread.width, CameraPreviewThread.height),
                 )
-            
+
                 h, w, ch = rgbImage.shape
                 bytesPerLine = ch * w
                 self.change_pixmap.emit(
-                    QImage(rgbImage.data, w, h, bytesPerLine, QImage.Format_RGB888)
-                        .scaled(
-                            CameraPreviewThread.width, 
-                            CameraPreviewThread.height, 
-                            Qt.KeepAspectRatio
-                        )
+                    QImage(
+                        rgbImage.data, w, h, bytesPerLine, QImage.Format_RGB888
+                    ).scaled(
+                        CameraPreviewThread.width,
+                        CameraPreviewThread.height,
+                        Qt.KeepAspectRatio,
+                    )
                 )
-            else: CameraPreviewThread.deviceNum = None
+            else:
+                CameraPreviewThread.deviceNum = None
             QThread.msleep(CameraPreviewThread.ms_per_frame)
 
 
-
 class CameraDisplayFrame(QFrame):
-    def __init__(self, top:UiMainWindow):
+    def __init__(self, top):
+        """
+        top - appView to connect component to
+        the rest of the application
+        """
         super().__init__(top.centralwidget)
         self.top = top
-        self.setGeometry(QRect(10,10, 740, 570))
+        self.setGeometry(QRect(10, 10, 740, 570))
         self.setAutoFillBackground(False)
         self.setFrameShape(QFrame.StyledPanel)
         self.setFrameShadow(QFrame.Raised)
         self.setObjectName("cameraDisplayFrame")
         # UNCOMMENT BELOW COMMENT FOR CAMERA OUTPUT
-        self.initUI() 
-
+        self.initUI()
 
     def initUI(self):
         """
@@ -122,27 +133,23 @@ class CameraDisplayFrame(QFrame):
         self.cameraThread = CameraPreviewThread(
             self, self.width(), self.height(), deviceNum=0
         )
-        self.cameraThread.change_pixmap.connect(
-            self.setImage
-        )
+        self.cameraThread.change_pixmap.connect(self.setImage)
         self.cameraThread.start()
 
-    def setScannerMode(self, mode:bool):    CameraPreviewThread.scannerMode = mode
+    def setScannerMode(self, mode: bool):
+        CameraPreviewThread.scannerMode = mode
 
     @pyqtSlot(QImage)
     def setImage(self, image):
         self.label.setPixmap(QPixmap.fromImage(image))
 
-
-    def takePicture(self, savePath:str, username:str="Anonim"):  
+    def takePicture(self, savePath: str, username: str = "Anonim"):
         timestamp = time.strftime("%d-%m-%Y-%H_%M_%S")
         CameraPreviewThread.currentPath = os.path.join(
-                savePath,
-                "%s-%04d-%s.jpg" % (
-                username,
-                CameraPreviewThread._save_seq,
-                timestamp
-            )
+            savePath,
+            "%s-%04d-%s.jpg" % (
+                username, CameraPreviewThread._save_seq, timestamp
+            ),
         )
         CameraPreviewThread.user = username
         CameraPreviewThread.pictureRequest = True
@@ -150,15 +157,14 @@ class CameraDisplayFrame(QFrame):
         # after that we expect for the picture to be loaded correctly
         QThread.msleep(CameraPreviewThread.ms_per_frame * 2)
 
-    
     def noDeviceDialog(self):
         from utils.DialogCollection import errorOccured
+
         errorOccured("no device detected")
 
-
-    def setup(self, mode:bool):     CameraPreviewThread.scannerMode = mode
+    def setup(self, mode: bool):
+        CameraPreviewThread.scannerMode = mode
 
     def turnOffCamera(self):
         self.cameraThread.requestInterruption()
         self.cameraThread.wait()
-

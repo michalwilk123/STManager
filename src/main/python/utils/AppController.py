@@ -10,85 +10,93 @@ class AppController:
         self.scannerMode = data["configuration"]["scanner_mode"]
         self.savePath = data["configuration"]["savePath"]
 
-        self.productList = next(filter(
-            lambda x: x["username"]==self.username, data["userData"]
-        ))["items"]
+        self.productList = next(
+            filter(lambda x: x["username"] == self.username, data["userData"])
+        )["items"]
 
         if len(self.productList) == 0:
             from utils.AppDataController import createNullProduct
+
             self.productList = [createNullProduct(0)]
 
         self.itemCursor = len(self.productList) - 1
         self.view = view
         self.changesMade = False
-        self._updateProductView() # displaying current data
-
+        self._updateProductView()  # displaying current data
 
     @staticmethod
     def getCameraList():
         from PyQt5.QtMultimedia import QCameraInfo
+
         return [c.description() for c in QCameraInfo.availableCameras()]
 
-    def getScannerMode(self): return self.scannerMode
+    def getScannerMode(self):
+        return self.scannerMode
 
-    def toggleScannerMode(self): 
+    def toggleScannerMode(self):
         self.scannerMode = not self.scannerMode
         self.view.cameraDisplayFrame.setScannerMode(self.scannerMode)
         self.changesMade = True
 
-    def getUsername(self) -> str: return self.username
+    def getUsername(self) -> str:
+        return self.username
 
     def switchUser(self):
-        from utils.DialogCollection import logUserIn, errorOccured
+        from utils.DialogCollection import logUserIn
+
         login, password = logUserIn()
-        if login == None:   return 
+        if login is None:
+            return
 
         self.productList = adc.findProducts(username=login)
         self.itemCursor = len(self.productList) - 1
         self.username = login
         self.changesMade = True
         self.view.updateStatusbar()
-        self._updateProductView() # displaying current data
+        self._updateProductView()  # displaying current data
 
-    def getNumOfProducts(self) -> int: return len(self.productList)
+    def getNumOfProducts(self) -> int:
+        return len(self.productList)
 
     def takePhoto(self):
         """
         Fetches data from app and saves photo in user selected directory
         """
         self.view.cameraDisplayFrame.takePicture(self.savePath, self.username)
-        photoPath:str = CameraPreviewThread.getLastPath()
-        photoName:str = photoPath.split("/")[-1]
+        photoPath: str = CameraPreviewThread.getLastPath()
+        photoName: str = photoPath.split("/")[-1]
         # adding newly taken photo to preview scrollbar
-        self.view.productManagerFrame.getScrollArea().addItemPreview(photoName, photoPath)
+        self.view.productManagerFrame.getScrollArea().addItemPreview(
+            photoName, photoPath
+        )
         self.productList[self.itemCursor]["filenames"].append(photoPath)
-        self.productList[self.itemCursor]["last_updated"] = time.strftime("%d-%m-%Y-%H_%M_%S")
+        self.productList[self.itemCursor]["last_updated"] = time.strftime(
+            "%d-%m-%Y-%H_%M_%S"
+        )
         self.changesMade = True
 
-    
-    def deletePhoto(self, photoPath:str):
+    def deletePhoto(self, photoPath: str):
         """
         Delete photo from the user data
         """
-        try:
-            self.productList[self.itemCursor]["filenames"].remove(photoPath)
-        except ValueError:
-            raise NotImplementedError("Tutaj powinien sie pojawic dialog z bledem")
+        self.productList[self.itemCursor]["filenames"].remove(photoPath)
         self.changesMade = True
-
 
     def saveCurrentProduct(self):
         """
         When you click this, information will be saved even if you
         prematuraly close the app.
         """
-        self.productList[self.itemCursor]["id"] = self.view\
-            .productManagerFrame.productBarcode.text()
-        self.productList[self.itemCursor]["desc"] = self.view\
-            .productManagerFrame.productDescription.toPlainText()
-        self.productList[self.itemCursor]["last_updated"] = time.strftime("%d-%m-%Y-%H_%M_%S")
+        self.productList[self.itemCursor][
+            "id"
+        ] = self.view.productManagerFrame.productBarcode.text()
+        self.productList[self.itemCursor][
+            "desc"
+        ] = self.view.productManagerFrame.productDescription.toPlainText()
+        self.productList[self.itemCursor]["last_updated"] = time.strftime(
+            "%d-%m-%Y-%H_%M_%S"
+        )
         self.changesMade = True
-
 
     def deleteCurrentProduct(self):
         """
@@ -106,7 +114,6 @@ class AppController:
             self.previousProduct()
             self.productList.pop(cursor)
 
-
     def nextProduct(self):
         """
         Fetch data for next product of the list
@@ -117,30 +124,28 @@ class AppController:
                 self._newProduct()
             else:
                 self.itemCursor = 0
-        else: self.itemCursor += 1
+        else:
+            self.itemCursor += 1
         self._updateProductView()
-
 
     def previousProduct(self):
         """
         switch view to previous product from the productList
         """
         self._updateProductJson()
-        self.itemCursor = 0 if self.itemCursor == 0 else self.itemCursor - 1 
+        self.itemCursor = 0 if self.itemCursor == 0 else self.itemCursor - 1
         self._updateProductView()
 
-
-    def changeSaveUrl(self, newPath:str):   
+    def changeSaveUrl(self, newPath: str):
         from utils.DialogCollection import getFolderPath
-        self.savePath = getFolderPath()
 
+        self.savePath = getFolderPath()
 
     def cleanUp(self):
         self._updateProductJson()
 
-
     def _updateProductJson(self):
-        if not self.changesMade: 
+        if not self.changesMade:
             return
 
         data = adc.getAllData()
@@ -153,7 +158,6 @@ class AppController:
         data["configuration"]["savePath"] = self.savePath
         adc.setNewData(data)
         self.changesMade = False
-
 
     def _updateProductView(self):
         self.view.productManagerFrame.getScrollArea().clearAll()
@@ -169,18 +173,19 @@ class AppController:
         self.view.productManagerFrame.setBarcode(product["id"])
         self.view.productManagerFrame.setDescription(product["desc"])
         self.view.productManagerFrame.productBarcode.setFocus()
-        CameraPreviewThread.newProduct = True    
-
+        CameraPreviewThread.newProduct = True
 
     def _newProduct(self):
         """
         Clears data fields from app, and saves that data in json file.
         """
         self.changesMade = True
-        self.productList.append(adc.createNullProduct(
-            self.itemCursor+1
-        ))
+        self.productList.append(adc.createNullProduct(self.itemCursor + 1))
         self.itemCursor = len(self.productList) - 1
-        self.productList[self.itemCursor]["creation_date"] = time.strftime("%d-%m-%Y-%H_%M_%S")
-        self.productList[self.itemCursor]["last_updated"] = time.strftime("%d-%m-%Y-%H_%M_%S")
+        self.productList[self.itemCursor]["creation_date"] = time.strftime(
+            "%d-%m-%Y-%H_%M_%S"
+        )
+        self.productList[self.itemCursor]["last_updated"] = time.strftime(
+            "%d-%m-%Y-%H_%M_%S"
+        )
         self._updateProductView()

@@ -1,7 +1,6 @@
 from __future__ import annotations
-from PyQt5.QtWidgets import QFrame, QPushButton, QWidget, \
-    QTextEdit, QScrollArea, QLabel, QVBoxLayout, QSizePolicy, QLineEdit
-from PyQt5.QtCore import QCoreApplication, QRect, Qt
+from PyQt5.QtWidgets import QFrame, QPushButton, QTextEdit, QLineEdit
+from PyQt5.QtCore import QRect
 from gui.scrollableProductComponent import ScrollPreviewComponent
 
 
@@ -21,19 +20,23 @@ class ProductManagerFrame(QFrame):
         self.productDescription = QTextEdit(self)
         self.productDescription.setGeometry(QRect(10, 380, 310, 190))
 
-        self.confirmButton = QPushButton(parent=self,text="Confirm")
+        self.confirmButton = QPushButton(parent=self, text="Confirm")
         self.confirmButton.setGeometry(QRect(160, 580, 160, 50))
 
-        self.cancelButton = QPushButton(parent=self,text="Cancel")
+        self.cancelButton = QPushButton(parent=self, text="Cancel")
         self.cancelButton.setGeometry(QRect(10, 580, 140, 50))
 
+    def getScrollArea(self) -> ScrollPreviewComponent:
+        return self.scrollArea
 
-    def getScrollArea(self) -> ScrollPreviewComponent:  return self.scrollArea
+    def setup(self):
+        pass
 
-    def setup(self):    pass
+    def setBarcode(self, text: str):
+        self.productBarcode.setText(text)
 
-    def setBarcode(self, text:str):     self.productBarcode.setText(text)
+    def setDescription(self, desc: str):
+        self.productDescription.setText(desc)
 
-    def setDescription(self,desc:str):  self.productDescription.setText(desc)
-
-    def getBarcode(self) -> str: return self.productBarcode.text()
+    def getBarcode(self) -> str:
+        return self.productBarcode.text()

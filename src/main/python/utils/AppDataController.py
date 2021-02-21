@@ -7,46 +7,53 @@ import json
 import time
 
 
-def createNewUser(username:str, password:str):
+def createNewUser(username: str, password: str):
     """
-    Adds new user to the json file. Creates also NULL product value into the product list.
+    Adds new user to the json file. Creates also NULL
+    product value into the product list.
     This ensures that data will be updated correctly.
     """
     userEntry = {
-      "username" : username,
-      "password" : password,
-      "created" : time.strftime("%d-%m-%Y-%H_%M_%S"),
-      "items" : [createNullProduct(0)]
+        "username": username,
+        "password": password,
+        "created": time.strftime("%d-%m-%Y-%H_%M_%S"),
+        "items": [createNullProduct(0)],
     }
     data = getAllData()
     data["userData"].append(userEntry)
     setNewData(data)
 
 
-def findProducts(id:str=None, phrase:str=None, timeFrom:str=None, 
-    timeTo:str=None, tags:List[str]=None, username:str=None):
+def findProducts(
+    id: str = None,
+    phrase: str = None,
+    timeFrom: str = None,
+    timeTo: str = None,
+    tags: List[str] = None,
+    username: str = None,
+):
     """
     Get list of products which pass given filters.
     id : barcode value (exact)
-    phrase : looks for phrase in description. Makes small grammar correction on the fly
+    phrase : looks for phrase in description. Makes small grammar
+    correction on the fly
     timeFrom - timeTo : time when the product was created
     tags - get products with given tags, only needs to match one
     user - get products made by user with given username
     """
     # TODO : matching beetween time intervals left
     data = getAllData()["userData"]
-    if username:    
-        data = next(filter(lambda x:x["username"]==username, data))
+    if username:
+        data = next(filter(lambda x: x["username"] == username, data))
         data = data["items"]
     else:
         d = []
         for usrData in data:
-            for entry in usrData["items"]: 
+            for entry in usrData["items"]:
                 entry["user"] = usrData["username"]
 
             d += usrData["items"]
         data = d
-
 
     if tags:
         # looking for any element in intersection of tags
@@ -58,12 +65,11 @@ def findProducts(id:str=None, phrase:str=None, timeFrom:str=None,
     return list(data)
 
 
-def checkForCredentials(username:str, password:str) -> bool:
+def checkForCredentials(username: str, password: str) -> bool:
     usrData = getAllData()["userData"]
 
     for usr in usrData:
-        if usr["username"] == username and \
-            usr["password"] == password:
+        if usr["username"] == username and usr["password"] == password:
             return True
     return False
 
@@ -74,15 +80,15 @@ def getConfiguration():
     return configuration
 
 
-def createNullProduct(index:int):
+def createNullProduct(index: int):
     return {
-        "index" : index,
-        "filenames":[],
-        "id" : "",
-        "desc" : "",
-        "tags" : [],
-        "creation_date" : "",
-        "last_updated" : ""
+        "index": index,
+        "filenames": [],
+        "id": "",
+        "desc": "",
+        "tags": [],
+        "creation_date": "",
+        "last_updated": "",
     }
 
 
@@ -99,8 +105,4 @@ def setNewData(data):
 
 def getUsrList():
     data = getAllData()["userData"]
-    return list(map(
-        lambda x: x["username"],
-        data
-    ))
-    
+    return list(map(lambda x: x["username"], data))
