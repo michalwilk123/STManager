@@ -37,16 +37,23 @@ def findProducts(id:str=None, phrase:str=None, timeFrom:str=None,
     data = getAllData()["userData"]
     if username:    
         data = next(filter(lambda x:x["username"]==username, data))
+        data = data["items"]
+    else:
+        d = []
+        for usrData in data:
+            for entry in usrData["items"]: 
+                entry["user"] = usrData["username"]
 
-    
-    data = data["items"]
+            d += usrData["items"]
+        data = d
+
 
     if tags:
         # looking for any element in intersection of tags
         data = filter(lambda x: bool([el for el in tags if el in x["tags"]]))
 
     if phrase:
-        data = filter(lambda x: phrase in x["desc"])
+        data = filter(lambda x: phrase in x["desc"], data)
 
     return list(data)
 
@@ -89,3 +96,11 @@ def setNewData(data):
     with open(APP_DATA_PATH, "w") as oldData:
         oldData.write(json.dumps(data))
 
+
+def getUsrList():
+    data = getAllData()["userData"]
+    return list(map(
+        lambda x: x["username"],
+        data
+    ))
+    

@@ -4,5 +4,4 @@
 *.pyc
 *.ui
 *.png
-*.json
 *__pycache__

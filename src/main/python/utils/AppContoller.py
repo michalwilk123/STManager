@@ -7,7 +7,6 @@ class AppController:
     def __init__(self, view):
         data = adc.getAllData()
         self.username = data["configuration"]["loggedUser"]
-        self.uiTheme = data["configuration"]["theme"]
         self.scannerMode = data["configuration"]["scanner_mode"]
         self.savePath = data["configuration"]["savePath"]
 
@@ -44,6 +43,7 @@ class AppController:
         self.productList = adc.findProducts(username=login)
         self.itemCursor = len(self.productList) - 1
         self.username = login
+        self.changesMade = True
         self.view.updateStatusbar()
         self._updateProductView() # displaying current data
 
@@ -59,6 +59,7 @@ class AppController:
         # adding newly taken photo to preview scrollbar
         self.view.productManagerFrame.getScrollArea().addItemPreview(photoName, photoPath)
         self.productList[self.itemCursor]["filenames"].append(photoPath)
+        self.productList[self.itemCursor]["last_updated"] = time.strftime("%d-%m-%Y-%H_%M_%S")
         self.changesMade = True
 
     
@@ -82,6 +83,7 @@ class AppController:
             .productManagerFrame.productBarcode.text()
         self.productList[self.itemCursor]["desc"] = self.view\
             .productManagerFrame.productDescription.toPlainText()
+        self.productList[self.itemCursor]["last_updated"] = time.strftime("%d-%m-%Y-%H_%M_%S")
         self.changesMade = True
 
 
@@ -176,4 +178,5 @@ class AppController:
         ))
         self.itemCursor = len(self.productList) - 1
         self.productList[self.itemCursor]["creation_date"] = time.strftime("%d-%m-%Y-%H_%M_%S")
+        self.productList[self.itemCursor]["last_updated"] = time.strftime("%d-%m-%Y-%H_%M_%S")
         self._updateProductView()

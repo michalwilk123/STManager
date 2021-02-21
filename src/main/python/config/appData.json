@@ -1,0 +1,15 @@
+{
+    "configuration": {
+        "loggedUser": "anon",
+        "scanner_mode": false,
+        "savePath": ""
+    },
+    "userData": [
+        {
+            "username": "anon",
+            "password": "",
+            "created": "",
+            "items": []
+        }
+    ]
+}

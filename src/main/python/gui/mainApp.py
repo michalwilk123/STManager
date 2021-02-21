@@ -145,7 +145,7 @@ class UiMainWindow(QMainWindow):
 
     def searchProducts(self):   
         from utils.ProductSearcher import ProductSearcher
-        p = ProductSearcher(self.controller)
+        p = ProductSearcher()
         p.exec()
 
     def showCameraChoice(self): self.cameraChoice = cameraChoice()
