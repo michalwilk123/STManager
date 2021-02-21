@@ -1,3 +1,6 @@
+"""
+Buttons located on the bottom of the app
+"""
 from PyQt5.QtWidgets import QFrame, QPushButton
 from PyQt5.QtCore import QRect
 
@@ -5,7 +8,6 @@ from PyQt5.QtCore import QRect
 class SettingsButtonsFrame(QFrame):
     def __init__(self, top):
         super().__init__(top.centralwidget)
-
         self.top = top
         self.setGeometry(QRect(10, 590, 740, 60))
         self.setFrameShape(QFrame.StyledPanel)

@@ -1,3 +1,7 @@
+"""
+This classes are responsible for the
+scrollable components to the right of the app
+"""
 from PyQt5.QtWidgets import (
     QFrame,
     QPushButton,
@@ -74,9 +78,9 @@ class ItemPreviewComponent(QFrame):
         self.delButton.setGeometry(QRect(260, 10, 30, 60))
         self.delButton.setStyleSheet(
             """
-            color: red;
-            font: 75 20pt "Noto Sans";
-            """
+color: red;
+font: 75 20pt "Noto Sans";
+"""
         )
         self.delButton.setFlat(True)
         self.delButton.clicked.connect(self.delButtonClicked)
@@ -99,7 +103,7 @@ class ItemPreviewComponent(QFrame):
                 )
             )
         else:
-            print("Error with fetching the image")
+            print("Error when fetching the image")
 
         self.delSeparator = QFrame(self)
         self.delSeparator.setGeometry(QRect(250, 10, 5, 60))
@@ -117,10 +121,6 @@ class ItemPreviewComponent(QFrame):
         from os import remove, path
 
         if path.exists(self.imgPath):
-            remove(self.imgPath)  # deleting selected file
+            remove(self.imgPath)
         else:
             errorOccured("Image does not exist anymore!!")
-
-        # TODO: tutaj dodac usuwanie zdjec z bazy oraz z folderu uzytkownika
-        # TODO: tutaj skończyłem i nie działa usuwanie zdjec
-        print("eluwina")

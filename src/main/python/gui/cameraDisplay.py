@@ -1,3 +1,6 @@
+"""
+Managing camera input and barcode detection
+"""
 from __future__ import annotations
 from PyQt5.QtWidgets import QFrame, QLabel
 from PyQt5.QtCore import QRect, Qt, QThread, pyqtSlot, pyqtSignal

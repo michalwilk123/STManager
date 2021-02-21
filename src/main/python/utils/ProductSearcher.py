@@ -1,3 +1,6 @@
+"""
+Dialog with ability to search through product database
+"""
 from __future__ import annotations
 from PyQt5.QtWidgets import (
     QDialog,

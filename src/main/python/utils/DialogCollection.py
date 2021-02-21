@@ -1,5 +1,5 @@
 """
-Display useful dialog widgets for the application
+Display useful dialogs for the application
 """
 from PyQt5.QtWidgets import (
     QDialog,
@@ -22,6 +22,9 @@ def logUserIn():
     password = lDialog.passText.text()
     if lDialog.result() == 0:
         return None, None
+    if login == "" or password == "":
+        errorOccured("Fill all fields!!")
+        return None, None
 
     from utils.AppDataController import checkForCredentials
 
@@ -41,6 +44,7 @@ def createAccout():
     del cDialog
 
     if password == "" or login == "":
+        errorOccured("Fill all fields!!")
         return
 
     if password != pass2:
@@ -49,7 +53,7 @@ def createAccout():
 
     from utils.AppDataController import checkForCredentials
 
-    if checkForCredentials(login, password):
+    if checkForCredentials(login, password, onlyCheckLogin=True):
         errorOccured("This user already exists!")
         return
 
@@ -102,25 +106,26 @@ class InfoDialog(QDialog):
         self.titleLabel.setFont(font)
 
         self.titleLabel_2 = QLabel("Author", self)
-        self.titleLabel_2.setGeometry(QRect(100, 160, 61, 31))
+        self.titleLabel_2.setGeometry(QRect(100, 180, 61, 31))
         self.titleLabel_2.setSizePolicy(
             QSizePolicy.Expanding, QSizePolicy.Fixed
         )
         self.titleLabel_2.setFont(font)
 
         self.authorLabel = QLabel("Michał Wilk - 02.2021", self)
-        self.authorLabel.setGeometry(QRect(10, 190, 241, 51))
+        self.authorLabel.setGeometry(QRect(10, 210, 241, 40))
         self.authorLabel.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
         self.authorLabel.setWordWrap(True)
 
         self.descLabel = QLabel(
             """
-App for managing chaos in post packages.
-License is GPL v3. Code is available on github: http://github.com
+App for managing products and their photos.
+License is GPL v3. Code and useful informations available 
+on github: http://github.com
 """,
             self,
         )
-        self.descLabel.setGeometry(QRect(10, 40, 241, 100))
+        self.descLabel.setGeometry(QRect(10, 40, 241, 150))
         self.descLabel.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
         self.descLabel.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
         self.descLabel.setWordWrap(True)

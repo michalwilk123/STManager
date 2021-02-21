@@ -65,11 +65,15 @@ def findProducts(
     return list(data)
 
 
-def checkForCredentials(username: str, password: str) -> bool:
+def checkForCredentials(
+        username: str, password: str,
+        onlyCheckLogin: bool = False) -> bool:
     usrData = getAllData()["userData"]
 
     for usr in usrData:
         if usr["username"] == username and usr["password"] == password:
+            return True
+        elif onlyCheckLogin and usr["username"] == username:
             return True
     return False
 

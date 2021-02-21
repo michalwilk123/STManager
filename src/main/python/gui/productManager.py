@@ -1,3 +1,7 @@
+"""
+All components to the right of the main
+app view
+"""
 from __future__ import annotations
 from PyQt5.QtWidgets import QFrame, QPushButton, QTextEdit, QLineEdit
 from PyQt5.QtCore import QRect
@@ -20,10 +24,10 @@ class ProductManagerFrame(QFrame):
         self.productDescription = QTextEdit(self)
         self.productDescription.setGeometry(QRect(10, 380, 310, 190))
 
-        self.confirmButton = QPushButton(parent=self, text="Confirm")
+        self.confirmButton = QPushButton(parent=self, text="Save")
         self.confirmButton.setGeometry(QRect(160, 580, 160, 50))
 
-        self.cancelButton = QPushButton(parent=self, text="Cancel")
+        self.cancelButton = QPushButton(parent=self, text="Delete")
         self.cancelButton.setGeometry(QRect(10, 580, 140, 50))
 
     def getScrollArea(self) -> ScrollPreviewComponent:
