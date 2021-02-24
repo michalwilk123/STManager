@@ -1,6 +1,6 @@
 {
-    "app_name": "barcode",
-    "author": "Michal",
+    "app_name": "StockTake Manager",
+    "author": "Michal Wilk",
     "main_module": "src/main/python/main.py",
     "version": "0.0.0"
 }

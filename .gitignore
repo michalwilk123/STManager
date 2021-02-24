@@ -1,8 +1,9 @@
+.vscode/*
 /.venv
 /temp
 *.jpg
 *.pyc
 *.ui
-*.png
-*.json
+appData.json
 *__pycache__
+/target
