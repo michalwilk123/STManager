@@ -16,9 +16,10 @@ from utils.DialogCollection import showInfo, cameraChoice, createAccout
 
 
 class AppView(QMainWindow):
-    def __init__(self, forceRestart: bool = False):
+    def __init__(self):
         super().__init__()
-        self.resize(1100, 700)
+
+        self.setFixedSize(1100, 700)
         self.cameraChoice = 0
 
         self.centralwidget = QWidget(self)

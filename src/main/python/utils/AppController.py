@@ -35,6 +35,15 @@ class AppController:
 
     def toggleScannerMode(self):
         self.scannerMode = not self.scannerMode
+        if self.scannerMode:
+            self.view.productManagerFrame\
+                .productBarcode.setReadOnly(False)
+            self.view.productManagerFrame\
+                .productBarcode.setFocus()
+        else:
+            self.view.productManagerFrame\
+                .productBarcode.setReadOnly(True)
+
         self.view.cameraDisplayFrame.setScannerMode(self.scannerMode)
         self.changesMade = True
 
@@ -62,6 +71,7 @@ class AppController:
         """
         Fetches data from app and saves photo in user selected directory
         """
+        print(self.savePath)
         self.view.cameraDisplayFrame.takePicture(self.savePath, self.username)
         photoPath: str = CameraPreviewThread.getLastPath()
         photoName: str = photoPath.split("/")[-1]
@@ -120,7 +130,7 @@ class AppController:
         """
         self._updateProductJson()
         if self.itemCursor == len(self.productList) - 1:
-            if self.view.productManagerFrame.getBarcode() != "":
+            if self.view.productManagerFrame.anyProduct():
                 self._newProduct()
             else:
                 self.itemCursor = 0
@@ -166,13 +176,17 @@ class AppController:
 
         # setting up previews for all photos
         for path in product["filenames"]:
+            print(path)
             self.view.productManagerFrame.getScrollArea().addItemPreview(
                 path.split("/")[-1], path
             )
 
         self.view.productManagerFrame.setBarcode(product["id"])
         self.view.productManagerFrame.setDescription(product["desc"])
-        self.view.productManagerFrame.productBarcode.setFocus()
+        if self.scannerMode:
+            self.view.productManagerFrame.productBarcode.setFocus()
+        else:
+            self.view.productManagerFrame.productBarcode.setReadOnly(True)
         CameraPreviewThread.newProduct = True
 
     def _newProduct(self):

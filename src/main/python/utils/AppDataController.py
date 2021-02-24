@@ -2,7 +2,7 @@
 Operations with the json file. Creates account. Executes json pseudo queries
 """
 from typing import List
-from config.macros import APP_DATA_PATH
+from appContext import context
 import json
 import time
 
@@ -55,6 +55,9 @@ def findProducts(
             d += usrData["items"]
         data = d
 
+    if id:
+        data = filter(lambda x: id == x["id"], data)
+
     if tags:
         # looking for any element in intersection of tags
         data = filter(lambda x: bool([el for el in tags if el in x["tags"]]))
@@ -79,7 +82,8 @@ def checkForCredentials(
 
 
 def getConfiguration():
-    with open(APP_DATA_PATH, "r") as dataFile:
+    with open(context.get_resource("appData.json"), "r")\
+        as dataFile:
         configuration = json.loads(dataFile.read())["configuration"]
     return configuration
 
@@ -97,13 +101,20 @@ def createNullProduct(index: int):
 
 
 def getAllData():
-    with open(APP_DATA_PATH, "r") as dataFile:
-        data = json.loads(dataFile.read())
+    try:
+        with open(context.get_resource("appData.json"), "r")\
+            as dataFile:
+            data = json.loads(dataFile.read())
+    except FileNotFoundError:
+        from pathlib import Path
+        print("Error with config json file\nCurrent path: {}".format(
+            Path().absolute()))
+        return None
     return data
 
 
 def setNewData(data):
-    with open(APP_DATA_PATH, "w") as oldData:
+    with open(context.get_resource("appData.json"), "w") as oldData:
         oldData.write(json.dumps(data))
 
 

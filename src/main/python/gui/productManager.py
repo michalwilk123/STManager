@@ -44,3 +44,13 @@ class ProductManagerFrame(QFrame):
 
     def getBarcode(self) -> str:
         return self.productBarcode.text()
+
+    def anyProduct(self):
+        if self.getBarcode():
+            return True
+        elif self.productDescription.toPlainText():
+            return True
+        elif self.scrollArea.getPreviewList():
+            return True
+        else:
+            return False

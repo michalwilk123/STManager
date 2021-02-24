@@ -118,14 +118,14 @@ class InfoDialog(QDialog):
         self.authorLabel.setWordWrap(True)
 
         self.descLabel = QLabel(
-            """
-App for managing products and their photos.
-License is GPL v3. Code and useful informations available 
-on github: http://github.com
-""",
+            "App for managing products and their photos. License is GPL v3. "
+            "Code and useful informations available "
+            "on github:\nhttps://github.com/michalwilk123/StocktakeManager",
             self,
         )
-        self.descLabel.setGeometry(QRect(10, 40, 241, 150))
+        self.descLabel.setTextInteractionFlags(Qt.TextSelectableByMouse)
+
+        self.descLabel.setGeometry(QRect(10, 50, 241, 150))
         self.descLabel.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
         self.descLabel.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
         self.descLabel.setWordWrap(True)

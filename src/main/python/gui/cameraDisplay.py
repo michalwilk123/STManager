@@ -5,7 +5,7 @@ from __future__ import annotations
 from PyQt5.QtWidgets import QFrame, QLabel
 from PyQt5.QtCore import QRect, Qt, QThread, pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QImage, QPixmap
-from config.macros import FRAME_RATE, FRAMES_BEETWEEN_SCANS, BEEP_SOUND_PATH
+from config.macros import FRAME_RATE, FRAMES_BEETWEEN_SCANS
 from pyzbar import pyzbar
 from playsound import playsound
 from threading import Thread
@@ -47,6 +47,8 @@ class CameraPreviewThread(QThread):
         cap = cv2.VideoCapture(CameraPreviewThread.deviceNum)
         spacingCounter = 0
         barcodes = []
+        from appContext import context
+        beepSoundPath = context.get_resource("beep.mp3")
 
         while (
             not self.isInterruptionRequested()
@@ -78,7 +80,7 @@ class CameraPreviewThread(QThread):
                     )
 
                 if barcodes:
-                    t = Thread(target=lambda: playsound(BEEP_SOUND_PATH))
+                    t = Thread(target=lambda: playsound(beepSoundPath))
                     t.start()
 
                     CameraPreviewThread.top.top.productManagerFrame.setBarcode(
@@ -154,6 +156,7 @@ class CameraDisplayFrame(QFrame):
                 username, CameraPreviewThread._save_seq, timestamp
             ),
         )
+        print(CameraPreviewThread.currentPath)
         CameraPreviewThread.user = username
         CameraPreviewThread.pictureRequest = True
         # below we are wating 2 frames for the saving to take place

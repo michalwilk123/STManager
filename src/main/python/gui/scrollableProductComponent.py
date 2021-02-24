@@ -54,6 +54,9 @@ class ScrollPreviewComponent(QFrame):
 
     def getLayout(self) -> QVBoxLayout:
         return self.vLayout
+    
+    def getPreviewList(self):
+        return self.itemPreviewList
 
 
 class ItemPreviewComponent(QFrame):
