@@ -88,7 +88,8 @@ class CameraPreviewThread(QThread):
                     )
                     CameraPreviewThread.newProduct = False
                     barcodes = []
-                    CameraPreviewThread.top.top.controller.saveCurrentProduct()
+                    CameraPreviewThread.top.top.controller\
+                        .saveCurrentProduct()
 
             if ret:
                 rgbImage = cv2.resize(

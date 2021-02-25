@@ -128,7 +128,8 @@ class AppView(QMainWindow):
         key = k.key()
         if key == Qt.Key_P:
             self.controller.takePhoto()
-        elif key == Qt.Key_Enter:
+        elif key == Qt.Key_Enter\
+                and self.controller.getScannerMode():
             self.controller.saveCurrentProduct()
         elif key == Qt.Key_Delete:
             self.controller.deleteCurrentProduct()

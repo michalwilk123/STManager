@@ -14,14 +14,15 @@ __Stocktake Manager__ takes photos of your products, corelates them with their p
 and then lets you go through them.
 
 App manages to detect barcodes from camera or from hand scanner(_when scanner mode selected_).
-You can then search through the products and chose many of the available filters.
+You can then search through the products and chose many of the available filters to find the
+exact item you are looking for.
 
-<br/>
+---
 
 ### Download prebuild version:
-* Windows: [dnjsak]()
-* Linux: [cxzcxz]()
-* Mac -> not tested
+* [Windows](dnjsak)
+* [Linux](dsadsa)
+* ~Mac~
 
 <br/>
 
@@ -34,10 +35,10 @@ You can then search through the products and chose many of the available filters
 
 <br/>
 
-### Other python modules:
+### Other python tools used:
 * __flake8__ - linting
 * __black__  - small reformatting improvments
-* __pipenv__ - manage used packages
+* __pipenv__ - managing packages
 
 <br/>
 

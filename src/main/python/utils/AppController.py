@@ -1,7 +1,7 @@
 import utils.AppDataController as adc
 from gui.cameraDisplay import CameraPreviewThread
-import time
 from functools import cmp_to_key
+import time
 
 
 class AppController:
@@ -109,13 +109,13 @@ class AppController:
         When you click this, information will be saved even if you
         prematuraly close the app.
         """
-        self.productList[self.itemCursor][
-            "id"
-        ] = self.view.productManagerFrame.productBarcode.text()
-        self.productList[self.itemCursor][
-            "desc"
-        ] = self.view.productManagerFrame.productDescription.toPlainText()
-        self.productList[self.itemCursor]["last_updated"] = time.strftime(
+        cItem = self.productList[self.itemCursor]
+
+        cItem["id"] = self.view.productManagerFrame.productBarcode.text()
+        cItem["desc"] = self.view.productManagerFrame\
+            .productDescription.toPlainText()
+
+        cItem["last_updated"] = time.strftime(
             "%d-%m-%Y-%H_%M_%S"
         )
         self.changesMade = True
