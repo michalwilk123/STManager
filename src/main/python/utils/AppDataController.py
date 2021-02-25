@@ -110,16 +110,29 @@ def createNullProduct(index: int):
     }
 
 
-def getAllData():
+def getAllData(debug:bool=False):
     try:
         with open(context.get_resource("appData.json"), "r")\
             as dataFile:
             data = json.loads(dataFile.read())
     except FileNotFoundError:
-        from pathlib import Path
-        print("Error with config json file\nCurrent path: {}".format(
-            Path().absolute()))
-        return None
+        if not debug:
+            from config.macros import APPDATA_SKELETON
+            from os import path
+
+            npath = path.join(
+                context.get_resource(), 
+                "appData.json")
+            
+            with open(npath, "w")\
+                as dataFile:
+                dataFile.write(APPDATA_SKELETON)
+                data = json.loads(APPDATA_SKELETON)
+        else:
+            from pathlib import Path
+            print("Error with config json file\nCurrent path: {}".format(
+                Path().absolute()))
+            return None
     return data
 
 
