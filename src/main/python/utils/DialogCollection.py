@@ -120,7 +120,7 @@ class InfoDialog(QDialog):
         self.descLabel = QLabel(
             "App for managing products and their photos. License is GPL v3. "
             "Code and useful informations available "
-            "on github:\nhttps://github.com/michalwilk123/StocktakeManager",
+            "on github:\nhttps://github.com/michalwilk123/STManager",
             self,
         )
         self.descLabel.setTextInteractionFlags(Qt.TextSelectableByMouse)

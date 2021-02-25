@@ -68,7 +68,7 @@ class AppView(QMainWindow):
         self.menubar.addAction(self.settingsMenu.menuAction())
         self.menubar.addAction(self.aboutMenu.menuAction())
 
-        self.setWindowTitle("Stocktake Manager 2021 - version 0.0.1")
+        self.setWindowTitle("STManager 2021 - version 0.0.2")
         self.setup()
 
     def getPhotoDestinationPath(self):

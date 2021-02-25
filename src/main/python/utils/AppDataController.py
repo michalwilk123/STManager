@@ -111,6 +111,9 @@ def createNullProduct(index: int):
 
 
 def getAllData(debug:bool=False):
+    """
+    Get all app data in form of dictionary
+    """
     try:
         with open(context.get_resource("appData.json"), "r")\
             as dataFile:

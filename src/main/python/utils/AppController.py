@@ -188,7 +188,6 @@ class AppController:
 
         # setting up previews for all photos
         for path in product["filenames"]:
-            print(path)
             self.view.productManagerFrame.getScrollArea().addItemPreview(
                 path.split("/")[-1], path
             )
