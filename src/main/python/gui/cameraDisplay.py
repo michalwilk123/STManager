@@ -156,7 +156,6 @@ class CameraDisplayFrame(QFrame):
                 username, CameraPreviewThread._save_seq, timestamp
             ),
         )
-        print(CameraPreviewThread.currentPath)
         CameraPreviewThread.user = username
         CameraPreviewThread.pictureRequest = True
         # below we are wating 2 frames for the saving to take place

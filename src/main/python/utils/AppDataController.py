@@ -65,6 +65,16 @@ def findProducts(
     if phrase:
         data = filter(lambda x: phrase in x["desc"], data)
 
+    if timeFrom:
+        data = filter(
+            lambda x: 0<compareDatetimes(x["last_updated"],timeFrom), data
+        )
+
+    if timeTo:
+        data = filter(
+            lambda x: 0>compareDatetimes(x["last_updated"],timeTo), data
+        )
+
     return list(data)
 
 
@@ -121,3 +131,36 @@ def setNewData(data):
 def getUsrList():
     data = getAllData()["userData"]
     return list(map(lambda x: x["username"], data))
+
+def compareDatetimes(date_0:str, date_1:str):
+    """
+    Do a LESS THEN operation (<) beetween two strings
+    containing dates.
+    Date Format [Name(Number of characters)]:
+    [DAY(2)]-[MONTH(2)]-[YEAR(4)]-[HOUR(2)]_[MIN(2)]_[SEC(2)]
+    ex.
+    01-01-2020-12_36_45
+    If date is badly formatted then program raises
+    an error.
+    """
+    if len(date_0) != 19 or len(date_1) != 19:
+        print(date_1)
+        raise Exception(f"BAD DATA FORMAT!!!")
+
+    def splitIntoSubdates(date:str):
+        date = date.split("-")
+        return date[:-1], date[-1]
+
+    day0 , hour0 = splitIntoSubdates(date_0)
+    day1 , hour1 = splitIntoSubdates(date_1)
+
+    day0 = [int(i) for i in day0][::-1]
+    day1 = [int(i) for i in day1][::-1]
+    if not day0 == day1:
+        res = day0 < day1
+        return -1 if res else 1
+
+    hour0 = [int(i) for i in hour0.split("_")]
+    hour1 = [int(i) for i in hour1.split("_")]
+    res = hour0 < hour1
+    return -1 if res else 1

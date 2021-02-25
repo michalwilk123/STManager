@@ -15,7 +15,7 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtCore import QRect, Qt, QSize
 from PyQt5.QtGui import QPixmap
 from utils.DialogCollection import errorOccured
-
+from appContext import noImagePixmap
 
 class ScrollPreviewComponent(QFrame):
     def __init__(self, top):
@@ -93,20 +93,19 @@ font: 75 20pt "Noto Sans";
         self.thbSeparator.setFrameShape(QFrame.VLine)
         self.thbSeparator.setFrameShadow(QFrame.Sunken)
 
-        self.thbLabel = QLabel("ERROR LOADING FILE", self)
+        self.thbLabel = QLabel(self)
         self.thbLabel.setGeometry(QRect(10, 10, 80, 60))
-        self.thbLabel.setStyleSheet("background-color: white;color:black;")
         self.thbLabel.setWordWrap(True)
 
         pixmap = QPixmap()
-        if pixmap.load(imgPath):
-            self.thbLabel.setPixmap(
-                pixmap.scaled(
-                    80, 60, Qt.IgnoreAspectRatio, Qt.FastTransformation
-                )
+        if not pixmap.load(imgPath):
+            pixmap = noImagePixmap
+
+        self.thbLabel.setPixmap(
+            pixmap.scaled(
+                80, 60, Qt.IgnoreAspectRatio, Qt.FastTransformation
             )
-        else:
-            print("Error when fetching the image")
+        )
 
         self.delSeparator = QFrame(self)
         self.delSeparator.setGeometry(QRect(250, 10, 5, 60))

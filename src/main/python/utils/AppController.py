@@ -1,6 +1,7 @@
 import utils.AppDataController as adc
 from gui.cameraDisplay import CameraPreviewThread
 import time
+from functools import cmp_to_key
 
 
 class AppController:
@@ -13,6 +14,14 @@ class AppController:
         self.productList = next(
             filter(lambda x: x["username"] == self.username, data["userData"])
         )["items"]
+        
+        self.productList.sort(
+            key=cmp_to_key(
+                lambda x,y: adc.compareDatetimes(
+                    x["last_updated"],y["last_updated"]
+                )
+            )
+        )
 
         if len(self.productList) == 0:
             from utils.AppDataController import createNullProduct
@@ -71,7 +80,10 @@ class AppController:
         """
         Fetches data from app and saves photo in user selected directory
         """
-        print(self.savePath)
+        if CameraPreviewThread.deviceNum is None:
+            print("no camera :(")
+            return
+
         self.view.cameraDisplayFrame.takePicture(self.savePath, self.username)
         photoPath: str = CameraPreviewThread.getLastPath()
         photoName: str = photoPath.split("/")[-1]

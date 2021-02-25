@@ -17,10 +17,13 @@ from PyQt5.QtWidgets import (
     QCheckBox,
     QTableWidgetItem,
     QAbstractScrollArea,
+    QHeaderView
 )
-from PyQt5.QtCore import QRect, Qt
+from PyQt5.QtCore import QRect, Qt, QDate
 from PyQt5.QtGui import QFont, QPixmap
 from utils.AppDataController import findProducts, getUsrList
+from appContext import noImagePixmap
+
 
 smallFont = QFont()
 smallFont.setPointSize(9)
@@ -35,15 +38,8 @@ class ProductSearcher(QDialog):
         self.tableScrollArea = ProductTable(self)
         self.usrList = getUsrList()
 
-        self.photoLabel = QLabel("NO PHOTO FOUND", self)
+        self.photoLabel = QLabel(self)
         self.photoLabel.setGeometry(QRect(10, 10, 450, 310))
-        self.photoLabel.setStyleSheet(
-            """
-background-color: white;\n
-color: red;\n
-font-size: 40px;
-"""
-        )
 
         self.prevPhotoButton = QPushButton("Previous", self)
         self.prevPhotoButton.setGeometry(QRect(10, 330, 88, 21))
@@ -73,9 +69,11 @@ color: black;
 
         self.dateToDEdit = QDateEdit(self)
         self.dateToDEdit.setGeometry(QRect(690, 520, 100, 30))
+        self.dateToDEdit.setDate(QDate.currentDate())
 
         self.dateFromDEdit = QDateEdit(self)
         self.dateFromDEdit.setGeometry(QRect(580, 520, 100, 30))
+        self.dateFromDEdit.setDate(QDate.currentDate())
 
         self.userComboBox = QComboBox(self)
         self.userComboBox.setGeometry(QRect(250, 520, 140, 30))
@@ -110,11 +108,11 @@ color: black;
         self.idCBox.setGeometry(QRect(10, 490, 100, 20))
         self.idCBox.setFont(smallFont)
 
-        self.createdDate = QLabel("Created: ", self)
+        self.createdDate = QLabel(self)
         self.createdDate.setGeometry(QRect(10, 460, 201, 16))
         self.createdDate.setFont(smallFont)
 
-        self.lastModLabel = QLabel("Last modified:", self)
+        self.lastModLabel = QLabel(self)
         self.lastModLabel.setGeometry(QRect(240, 460, 221, 16))
         self.lastModLabel.setFont(smallFont)
 
@@ -138,15 +136,19 @@ color: black;
         self.prevPhotoButton.clicked.connect(self.previousPhotoClicked)
 
     def findButtonClicked(self):
+        dateCon = lambda d: d.replace(".","-")
+
         id = self.idLEdit.text()\
             if self.idCBox.isChecked() else None
         usr = self.userComboBox.currentText()\
             if self.userCBox.isChecked() else None
         phrase = self.phraseLEdit.text()\
             if self.phraseCBox.isChecked() else None
-        dateFrom = self.dateFromDEdit.text()\
+        dateFrom = dateCon(
+            self.dateFromDEdit.text())+"-00_00_00"\
             if self.dateFromCBox.isChecked() else None
-        dateTo = self.dateToDEdit.text()\
+        dateTo = dateCon(
+            self.dateToDEdit.text())+"-23_59_59"\
             if self.dateToCBox.isChecked() else None
         self.tableScrollArea.displayProductList(
             findProducts(
@@ -180,24 +182,29 @@ color: black;
         self.reloadPhoto()
         self.idLabel.setText("Id: {}".format(item["id"]))
         self.descriptionLabel.setText(item["desc"])
-        self.createdDate.setText(item["creation_date"])
-        self.lastModLabel.setText(item["last_updated"])
+        self.createdDate.setText(
+            f"Created: {item['creation_date'][0:10]}" )
+        self.lastModLabel.setText(
+            f"Last modified: {item['last_updated'][0:10]}")
 
     def reloadPhoto(self):
         if not self.currentItem["filenames"]:
-            return
+            pixmap = noImagePixmap
+        else:
+            pixmap = QPixmap()
+            loaded = pixmap.load(self.currentItem["filenames"][self.photoCursor])
+            if not loaded:
+                pixmap = noImagePixmap
 
-        pixmap = QPixmap()
-        loaded = pixmap.load(self.currentItem["filenames"][self.photoCursor])
-        if loaded:
-            self.photoLabel.setPixmap(
-                pixmap.scaled(
-                    self.photoLabel.width(),
-                    self.photoLabel.height(),
-                    Qt.IgnoreAspectRatio,
-                    Qt.FastTransformation,
-                )
+        self.photoLabel.setPixmap(
+            pixmap.scaled(
+                self.photoLabel.width(),
+                self.photoLabel.height(),
+                Qt.IgnoreAspectRatio,
+                Qt.FastTransformation,
             )
+        )
+        
 
 
 class ProductTable(QScrollArea):
@@ -219,6 +226,7 @@ class ProductTable(QScrollArea):
         self.layout.addWidget(self.table)
         self.setWidget(self.contents)
         self.table.verticalHeader().setDefaultSectionSize(40)
+
         self.table.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
 
         heading = ["Nr", "Name", "User", "Created", "Description"]
@@ -228,15 +236,22 @@ class ProductTable(QScrollArea):
             e.setTextAlignment(Qt.AlignTop | Qt.AlignLeft)
             self.table.setItem(0, i, e)
 
+        self.table.horizontalHeader()\
+            .setSectionResizeMode(QHeaderView.Stretch)
         self.table.setRowHeight(0, 20)
         self.table.cellClicked.connect(self.cellClicked)
 
     def displayProductList(self, prodList, user: str = None):
         self.clearTable()
-        self.table.setRowCount(len(prodList) + 1)
         self.top.titleLabel.setText(f"Results:    {len(prodList)}")
-        self.prodList = prodList
-        for i, row in enumerate(prodList, 1):
+        self.prodList = list(filter(
+                lambda row: \
+                    any([row["id"], row["desc"], row["filenames"]]),
+                prodList
+        ))
+        self.table.setRowCount(len(self.prodList) + 1)
+
+        for i, row in enumerate(self.prodList, 1):
             e = QTableWidgetItem()
             e.setText(str(i))
             self.table.setItem(i, 0, e)
@@ -253,9 +268,8 @@ class ProductTable(QScrollArea):
                 e.setText(str(col))
                 e.setTextAlignment(Qt.AlignTop | Qt.AlignLeft)
                 self.table.setItem(i, j, e)
-        if len(prodList):
+        if len(self.prodList):
             self.top.selectCurrentProduct(prodList[0])
-        self.table.resizeColumnsToContents()
 
     def clearTable(self):
         self.prodList = []
@@ -268,7 +282,6 @@ class ProductTable(QScrollArea):
         return e
 
     def cellClicked(self, row: int, column: int):
-        print(f"row: {row} | col: {column}")
         if row > len(self.prodList):
             print("no item exist")
             return
