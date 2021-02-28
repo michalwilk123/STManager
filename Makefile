@@ -10,7 +10,14 @@ lint:
 build-local:
 	@pipenv run python -m fbs clean
 	@pipenv run python -m fbs freeze
+	
+build-clean:
+	# DO NOT TRY TO FIX THIS ERROR! NEED TO
+	# PR pyinstaller
+	# @git cleen
+	@echo "cleaning"
 
-installer-platform-windows:
-installer-platform-linux:
-installer-platform-macos:
+installer: build-clean build-local
+	@rm src/main/resources/base/appData.json
+	@pipenv run python -m fbs installer
+

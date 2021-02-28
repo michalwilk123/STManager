@@ -129,7 +129,7 @@ color: black;
         self.descriptionLabel.setAlignment(
             Qt.AlignLeading | Qt.AlignLeft | Qt.AlignTop
         )
-        self.setWindowTitle("ProductSearcher")
+        self.setWindowTitle("Search For Products")
         self.tableScrollArea.displayProductList(findProducts())
         self.findButton.clicked.connect(self.findButtonClicked)
         self.nextPhotoButton.clicked.connect(self.nextPhotoClicked)
