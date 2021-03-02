@@ -7,3 +7,4 @@
 appData.json
 *__pycache__
 /target
+*.pyo

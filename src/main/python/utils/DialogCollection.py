@@ -86,8 +86,11 @@ def cameraChoice() -> int:
         return camDialog.deviceComboBox.currentIndex()
 
 
-def getFolderPath() -> str:
-    return QFileDialog.getExistingDirectoryUrl().path()
+def getFolderPath(parent) -> str:
+    # note: in windows 10, we need to pass parent reference to
+    # the function. Otherwise QFileDialog will emit a silent crash
+    return QFileDialog.getExistingDirectory(
+        parent, options=QFileDialog.DontUseNativeDialog)
 
 
 class InfoDialog(QDialog):

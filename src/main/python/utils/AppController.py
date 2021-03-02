@@ -161,7 +161,7 @@ class AppController:
     def changeSaveUrl(self, newPath: str):
         from utils.DialogCollection import getFolderPath
 
-        self.savePath = getFolderPath()
+        self.savePath = getFolderPath(self.view)
 
     def cleanUp(self):
         self._updateProductJson()
