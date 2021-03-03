@@ -1,7 +1,6 @@
 """
 Operations with the json file. Creates account. Executes json pseudo queries
 """
-from typing import List
 from appContext import context
 import json
 import time
@@ -29,7 +28,7 @@ def findProducts(
     phrase: str = None,
     timeFrom: str = None,
     timeTo: str = None,
-    tags: List[str] = None,
+    tags: list[str] = None,
     username: str = None,
 ):
     """

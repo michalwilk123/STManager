@@ -33,7 +33,7 @@ bigFont.setPointSize(14)
 
 class ProductSearcher(QDialog):
     def __init__(self):
-        super().__init__()
+        super().__init__(None, Qt.WindowSystemMenuHint | Qt.WindowTitleHint)
         self.setFixedSize(880, 560)
         self.tableScrollArea = ProductTable(self)
         self.usrList = getUsrList()

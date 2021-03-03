@@ -1,23 +1,20 @@
-
 all:
 	@pipenv run python -m fbs run
 
+install:
+	@git clean
+	@pipenv install
+
 lint:
 	@echo "Linting and reformating code in project"
-	@python -m black src/main/python/*
+	@python -m black src/main/python/* --line-length=79
 	@python -m flake8 src/main/python/*
 
-build-local:
+build: install
 	@pipenv run python -m fbs clean
 	@pipenv run python -m fbs freeze
 	
-build-clean:
-	# DO NOT TRY TO FIX THIS ERROR! NEED TO
-	# PR pyinstaller
-	# @git cleen
-	@echo "cleaning"
 
-installer: build-clean build-local
-	@rm src/main/resources/base/appData.json
+installer: build
 	@pipenv run python -m fbs installer
 
