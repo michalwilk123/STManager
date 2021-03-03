@@ -1,3 +1,4 @@
+[![CodeFactor](https://www.codefactor.io/repository/github/michalwilk123/stmanager/badge)](https://www.codefactor.io/repository/github/michalwilk123/stmanager)
 # __STManager__
 ### ![There should be big app icon](src/main/icons/githubIcon.png)
 ---
@@ -78,6 +79,5 @@ make
 __Create an executable for the app__
 ```bash
 git clone https://github.com/michalwilk123/STManager.git
-make install
-make build
+make installer
 ```
