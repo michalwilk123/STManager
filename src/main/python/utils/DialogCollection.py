@@ -10,6 +10,8 @@ from PyQt5.QtWidgets import (
     QComboBox,
     QMessageBox,
     QFileDialog,
+    QFormLayout,
+    QVBoxLayout
 )
 from PyQt5.QtCore import QRect, Qt
 from PyQt5.QtGui import QFont
@@ -41,6 +43,8 @@ def createAccout():
     login = cDialog.loginText.text()
     password = cDialog.passText.text()
     pass2 = cDialog.passRepText.text()
+    if cDialog.result() == 0:
+        return None, None
     del cDialog
 
     if password == "" or login == "":
@@ -95,28 +99,25 @@ def getFolderPath(parent) -> str:
 
 class InfoDialog(QDialog):
     def __init__(self):
-        super().__init__()
-        self.setFixedSize(260, 260)
+        super().__init__(None, Qt.WindowSystemMenuHint | Qt.WindowTitleHint)
 
+        self.lo = QVBoxLayout(self)
         font = QFont()
         font.setFamily("Noto Sans")
         font.setPointSize(12)
         font.setBold(True)
 
-        self.titleLabel = QLabel("About", self)
-        self.titleLabel.setGeometry(QRect(100, 20, 51, 31))
+        self.titleLabel = QLabel("About")
         self.titleLabel.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.titleLabel.setFont(font)
 
-        self.titleLabel_2 = QLabel("Author", self)
-        self.titleLabel_2.setGeometry(QRect(100, 180, 61, 31))
+        self.titleLabel_2 = QLabel("Author")
         self.titleLabel_2.setSizePolicy(
             QSizePolicy.Expanding, QSizePolicy.Fixed
         )
         self.titleLabel_2.setFont(font)
 
-        self.authorLabel = QLabel("Michał Wilk - 02.2021", self)
-        self.authorLabel.setGeometry(QRect(10, 210, 241, 40))
+        self.authorLabel = QLabel("Michał Wilk - 02.2021")
         self.authorLabel.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
         self.authorLabel.setWordWrap(True)
 
@@ -128,29 +129,32 @@ class InfoDialog(QDialog):
         )
         self.descLabel.setTextInteractionFlags(Qt.TextSelectableByMouse)
 
-        self.descLabel.setGeometry(QRect(10, 50, 241, 150))
         self.descLabel.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
         self.descLabel.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
         self.descLabel.setWordWrap(True)
+        self.lo.addWidget(self.titleLabel, alignment=Qt.AlignCenter)
+        self.lo.addWidget(self.descLabel)
+        self.lo.addWidget(self.titleLabel_2, alignment=Qt.AlignCenter)
+        self.lo.addWidget(self.authorLabel)
+        self.lo.setSpacing(10)
 
         self.setWindowTitle("About")
 
 
 class LoginDialog(QDialog):
     def __init__(self):
-        super().__init__()
-        self.setFixedSize(260, 170)
-        self.loginText = QLineEdit(self)
-        self.loginText.setGeometry(QRect(80, 50, 170, 30))
-        self.loginText.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        super().__init__(None, Qt.WindowSystemMenuHint | Qt.WindowTitleHint)
+        self.lo = QFormLayout(self)
+        self.loginText = QLineEdit()
+        self.loginText.setFixedWidth(170)
 
-        self.passText = QLineEdit(self)
+        self.passText = QLineEdit()
         self.passText.setEchoMode(QLineEdit.Password)
-        self.passText.setGeometry(QRect(80, 90, 170, 30))
+        self.passText.setFixedWidth(170)
         self.passText.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
 
-        self.dialogButtons = QDialogButtonBox(self)
-        self.dialogButtons.setGeometry(QRect(80, 130, 171, 35))
+        self.dialogButtons = QDialogButtonBox()
+        self.loginText.setFixedSize(170,30)
         self.dialogButtons.setStandardButtons(
             QDialogButtonBox.Cancel | QDialogButtonBox.Ok
         )
@@ -159,15 +163,19 @@ class LoginDialog(QDialog):
         font.setFamily("Noto Sans")
         font.setPointSize(12)
         font.setBold(True)
-        self.titleLabel = QLabel("Log in", self)
-        self.titleLabel.setGeometry(QRect(95, 10, 61, 31))
+        self.titleLabel = QLabel("Log in")
         self.titleLabel.setFont(font)
 
-        self.loginLabel = QLabel("Login:", self)
-        self.loginLabel.setGeometry(QRect(5, 50, 58, 31))
+        self.loginLabel = QLabel("Login:")
 
-        self.passLabel = QLabel("Password:", self)
-        self.passLabel.setGeometry(QRect(5, 90, 71, 31))
+        self.passLabel = QLabel("Password:")
+
+        self.lo.addRow(self.titleLabel)
+        self.lo.addRow(self.loginLabel, self.loginText)
+        self.lo.addRow(self.passLabel, self.passText)
+        self.lo.addRow(self.dialogButtons)
+        self.lo.setVerticalSpacing(10)
+
         self.setWindowTitle("Log in")
         self.dialogButtons.accepted.connect(lambda: self.done(1))
         self.dialogButtons.rejected.connect(lambda: self.done(0))
@@ -175,24 +183,25 @@ class LoginDialog(QDialog):
 
 class CreateAccountDialog(QDialog):
     def __init__(self):
-        super().__init__()
-        self.setFixedSize(260, 210)
-        self.loginText = QLineEdit(self)
-        self.loginText.setGeometry(QRect(80, 50, 170, 30))
+        super().__init__(None, Qt.WindowSystemMenuHint | Qt.WindowTitleHint)
+        
+        self.lo = QFormLayout(self)
+        self.loginText = QLineEdit()
+        self.loginText.setFixedWidth(170)
         self.loginText.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
 
-        self.passText = QLineEdit(self)
+        self.passText = QLineEdit()
         self.passText.setEchoMode(QLineEdit.Password)
-        self.passText.setGeometry(QRect(80, 90, 170, 30))
+        self.passText.setFixedWidth(170)
         self.passText.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
 
-        self.passRepText = QLineEdit(self)
+        self.passRepText = QLineEdit()
         self.passRepText.setEchoMode(QLineEdit.Password)
-        self.passRepText.setGeometry(QRect(80, 130, 170, 30))
+        self.passRepText.setFixedWidth(170)
         self.passRepText.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
 
-        self.dialogButtons = QDialogButtonBox(self)
-        self.dialogButtons.setGeometry(QRect(80, 170, 171, 35))
+        self.dialogButtons = QDialogButtonBox()
+        self.dialogButtons.setFixedWidth(170)
         self.dialogButtons.setStandardButtons(
             QDialogButtonBox.Cancel | QDialogButtonBox.Ok
         )
@@ -201,23 +210,26 @@ class CreateAccountDialog(QDialog):
         font.setFamily("Noto Sans")
         font.setPointSize(12)
         font.setBold(True)
-        self.titleLabel = QLabel("Create Account", self)
-        self.titleLabel.setGeometry(QRect(80, 10, 150, 30))
+        self.titleLabel = QLabel("Create Account")
         self.titleLabel.setFont(font)
 
-        self.loginLabel = QLabel("Login:", self)
-        self.loginLabel.setGeometry(QRect(5, 50, 58, 31))
+        self.loginLabel = QLabel("Login:")
 
-        self.passLabel = QLabel("Password:", self)
-        self.passLabel.setGeometry(QRect(5, 90, 71, 31))
+        self.passLabel = QLabel("Password:")
 
-        self.passRepLabel = QLabel("Repeat password:", self)
-        self.passRepLabel.setGeometry(QRect(5, 130, 71, 41))
+        self.passRepLabel = QLabel("Repeat password:")
         self.passRepLabel.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.passRepLabel.setAlignment(
             Qt.AlignLeading | Qt.AlignLeft | Qt.AlignTop
         )
         self.passRepLabel.setWordWrap(True)
+        
+        self.lo.addRow(self.titleLabel)
+        self.lo.addRow(self.loginLabel, self.loginText)
+        self.lo.addRow(self.passLabel, self.passText)
+        self.lo.addRow(self.passRepLabel, self.passRepText)
+        self.lo.addRow(None, self.dialogButtons)
+        self.lo.setVerticalSpacing(10)
 
         self.setWindowTitle("Create Account")
         self.dialogButtons.accepted.connect(lambda: self.done(1))
@@ -226,21 +238,21 @@ class CreateAccountDialog(QDialog):
 
 class CameraChooserDialog(QDialog):
     def __init__(self, deviceList):
-        super().__init__()
-        self.setFixedSize(260, 90)
+        super().__init__(None, Qt.WindowSystemMenuHint | Qt.WindowTitleHint)
+        self.lo = QFormLayout(self)
         self.deviceComboBox = QComboBox(self)
         self.deviceComboBox.addItems(deviceList)
-        self.deviceComboBox.setGeometry(QRect(80, 10, 170, 32))
 
         self.dialogButtons = QDialogButtonBox(self)
-        self.dialogButtons.setGeometry(QRect(80, 50, 170, 34))
         self.dialogButtons.setStandardButtons(
             QDialogButtonBox.Cancel | QDialogButtonBox.Ok
         )
 
         self.label = QLabel("Choose a device", self)
-        self.label.setGeometry(QRect(5, 10, 61, 31))
         self.label.setWordWrap(True)
+        self.lo.addRow(self.label, self.deviceComboBox)
+        self.lo.addRow(self.dialogButtons)
+        self.lo.setVerticalSpacing(10)
 
         self.setWindowTitle("Choose a device")
         self.dialogButtons.accepted.connect(lambda: self.done(1))
