@@ -14,11 +14,11 @@ class AppController:
         self.productList = next(
             filter(lambda x: x["username"] == self.username, data["userData"])
         )["items"]
-        
+
         self.productList.sort(
             key=cmp_to_key(
-                lambda x,y: adc.compareDatetimes(
-                    x["last_updated"],y["last_updated"]
+                lambda x, y: adc.compareDatetimes(
+                    x["last_updated"], y["last_updated"]
                 )
             )
         )
@@ -45,13 +45,10 @@ class AppController:
     def toggleScannerMode(self):
         self.scannerMode = not self.scannerMode
         if self.scannerMode:
-            self.view.productManagerFrame\
-                .productBarcode.setReadOnly(False)
-            self.view.productManagerFrame\
-                .productBarcode.setFocus()
+            self.view.productManagerFrame.productBarcode.setReadOnly(False)
+            self.view.productManagerFrame.productBarcode.setFocus()
         else:
-            self.view.productManagerFrame\
-                .productBarcode.setReadOnly(True)
+            self.view.productManagerFrame.productBarcode.setReadOnly(True)
 
         self.view.cameraDisplayFrame.setScannerMode(self.scannerMode)
         self.changesMade = True
@@ -112,12 +109,11 @@ class AppController:
         cItem = self.productList[self.itemCursor]
 
         cItem["id"] = self.view.productManagerFrame.productBarcode.text()
-        cItem["desc"] = self.view.productManagerFrame\
-            .productDescription.toPlainText()
+        cItem[
+            "desc"
+        ] = self.view.productManagerFrame.productDescription.toPlainText()
 
-        cItem["last_updated"] = time.strftime(
-            "%d-%m-%Y-%H_%M_%S"
-        )
+        cItem["last_updated"] = time.strftime("%d-%m-%Y-%H_%M_%S")
         self.changesMade = True
 
     def deleteCurrentProduct(self):

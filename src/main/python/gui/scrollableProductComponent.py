@@ -17,6 +17,7 @@ from PyQt5.QtGui import QPixmap
 from utils.DialogCollection import errorOccured
 from appContext import noImagePixmap
 
+
 class ScrollPreviewComponent(QFrame):
     def __init__(self, top):
         super().__init__(top)
@@ -35,7 +36,8 @@ class ScrollPreviewComponent(QFrame):
         self.scrollContents = QWidget()
         self.scrollContents.setGeometry(QRect(0, 0, 350, 330))
         self.spacer = QSpacerItem(
-            20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+            20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding
+        )
 
         self.vLayout = QVBoxLayout(self.scrollContents)
         self.vLayout.addSpacerItem(self.spacer)
@@ -54,7 +56,7 @@ class ScrollPreviewComponent(QFrame):
 
     def getLayout(self) -> QVBoxLayout:
         return self.vLayout
-    
+
     def getPreviewList(self):
         return self.itemPreviewList
 
@@ -63,9 +65,8 @@ class ItemPreviewComponent(QFrame):
     parent: ScrollPreviewComponent = None
 
     def __init__(
-            self, parent: ScrollPreviewComponent,
-            description: str, imgPath: str
-            ):
+        self, parent: ScrollPreviewComponent, description: str, imgPath: str
+    ):
         super().__init__()
         if ItemPreviewComponent.parent is None:
             ItemPreviewComponent.parent = parent
@@ -102,9 +103,7 @@ font: 75 20pt "Noto Sans";
             pixmap = noImagePixmap
 
         self.thbLabel.setPixmap(
-            pixmap.scaled(
-                80, 60, Qt.IgnoreAspectRatio, Qt.FastTransformation
-            )
+            pixmap.scaled(80, 60, Qt.IgnoreAspectRatio, Qt.FastTransformation)
         )
 
         self.delSeparator = QFrame(self)
@@ -117,8 +116,9 @@ font: 75 20pt "Noto Sans";
     def delButtonClicked(self):
         ItemPreviewComponent.parent.vLayout.removeWidget(self)
         ItemPreviewComponent.parent.itemPreviewList.remove(self)
-        ItemPreviewComponent.parent.top.top\
-            .controller.deletePhoto(self.imgPath)
+        ItemPreviewComponent.parent.top.top.controller.deletePhoto(
+            self.imgPath
+        )
 
         from os import remove, path
 

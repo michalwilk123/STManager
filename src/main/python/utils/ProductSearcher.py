@@ -17,7 +17,7 @@ from PyQt5.QtWidgets import (
     QCheckBox,
     QTableWidgetItem,
     QAbstractScrollArea,
-    QHeaderView
+    QHeaderView,
 )
 from PyQt5.QtCore import QRect, Qt, QDate
 from PyQt5.QtGui import QFont, QPixmap
@@ -136,25 +136,35 @@ color: black;
         self.prevPhotoButton.clicked.connect(self.previousPhotoClicked)
 
     def findButtonClicked(self):
-        dateCon = lambda d: d.replace(".","-")
+        def dateCon(d: str):
+            return d.replace(".", "-")
 
-        id = self.idLEdit.text()\
-            if self.idCBox.isChecked() else None
-        usr = self.userComboBox.currentText()\
-            if self.userCBox.isChecked() else None
-        phrase = self.phraseLEdit.text()\
-            if self.phraseCBox.isChecked() else None
-        dateFrom = dateCon(
-            self.dateFromDEdit.text())+"-00_00_00"\
-            if self.dateFromCBox.isChecked() else None
-        dateTo = dateCon(
-            self.dateToDEdit.text())+"-23_59_59"\
-            if self.dateToCBox.isChecked() else None
+        productid = self.idLEdit.text() if self.idCBox.isChecked() else None
+        usr = (
+            self.userComboBox.currentText()
+            if self.userCBox.isChecked()
+            else None
+        )
+        phrase = (
+            self.phraseLEdit.text() if self.phraseCBox.isChecked() else None
+        )
+        dateFrom = (
+            dateCon(self.dateFromDEdit.text()) + "-00_00_00"
+            if self.dateFromCBox.isChecked()
+            else None
+        )
+        dateTo = (
+            dateCon(self.dateToDEdit.text()) + "-23_59_59"
+            if self.dateToCBox.isChecked()
+            else None
+        )
         self.tableScrollArea.displayProductList(
             findProducts(
-                id=id, username=usr,
-                phrase=phrase, timeFrom=dateFrom,
-                timeTo=dateTo
+                id=productid,
+                username=usr,
+                phrase=phrase,
+                timeFrom=dateFrom,
+                timeTo=dateTo,
             ),
             usr,
         )
@@ -182,17 +192,19 @@ color: black;
         self.reloadPhoto()
         self.idLabel.setText("Id: {}".format(item["id"]))
         self.descriptionLabel.setText(item["desc"])
-        self.createdDate.setText(
-            f"Created: {item['creation_date'][0:10]}" )
+        self.createdDate.setText(f"Created: {item['creation_date'][0:10]}")
         self.lastModLabel.setText(
-            f"Last modified: {item['last_updated'][0:10]}")
+            f"Last modified: {item['last_updated'][0:10]}"
+        )
 
     def reloadPhoto(self):
         if not self.currentItem["filenames"]:
             pixmap = noImagePixmap
         else:
             pixmap = QPixmap()
-            loaded = pixmap.load(self.currentItem["filenames"][self.photoCursor])
+            loaded = pixmap.load(
+                self.currentItem["filenames"][self.photoCursor]
+            )
             if not loaded:
                 pixmap = noImagePixmap
 
@@ -204,7 +216,6 @@ color: black;
                 Qt.FastTransformation,
             )
         )
-        
 
 
 class ProductTable(QScrollArea):
@@ -236,19 +247,19 @@ class ProductTable(QScrollArea):
             e.setTextAlignment(Qt.AlignTop | Qt.AlignLeft)
             self.table.setItem(0, i, e)
 
-        self.table.horizontalHeader()\
-            .setSectionResizeMode(QHeaderView.Stretch)
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.table.setRowHeight(0, 20)
         self.table.cellClicked.connect(self.cellClicked)
 
     def displayProductList(self, prodList, user: str = None):
         self.clearTable()
         self.top.titleLabel.setText(f"Results:    {len(prodList)}")
-        self.prodList = list(filter(
-                lambda row: \
-                    any([row["id"], row["desc"], row["filenames"]]),
-                prodList
-        ))
+        self.prodList = list(
+            filter(
+                lambda row: any([row["id"], row["desc"], row["filenames"]]),
+                prodList,
+            )
+        )
         self.table.setRowCount(len(self.prodList) + 1)
 
         for i, row in enumerate(self.prodList, 1):
@@ -268,7 +279,7 @@ class ProductTable(QScrollArea):
                 e.setText(str(col))
                 e.setTextAlignment(Qt.AlignTop | Qt.AlignLeft)
                 self.table.setItem(i, j, e)
-        if len(self.prodList):
+        if self.prodList:
             self.top.selectCurrentProduct(prodList[0])
 
     def clearTable(self):

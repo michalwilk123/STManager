@@ -1,6 +1,6 @@
 FRAME_RATE = 15
 FRAMES_BEETWEEN_SCANS = 5
-APPDATA_SKELETON="""
+APPDATA_SKELETON = """
 {
     "configuration": {
         "loggedUser": "anon",

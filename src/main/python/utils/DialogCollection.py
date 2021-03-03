@@ -11,9 +11,9 @@ from PyQt5.QtWidgets import (
     QMessageBox,
     QFileDialog,
     QFormLayout,
-    QVBoxLayout
+    QVBoxLayout,
 )
-from PyQt5.QtCore import QRect, Qt
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 
 
@@ -24,7 +24,7 @@ def logUserIn():
     password = lDialog.passText.text()
     if lDialog.result() == 0:
         return None, None
-    if login == "" or password == "":
+    if login or password:
         errorOccured("Fill all fields!!")
         return None, None
 
@@ -32,9 +32,9 @@ def logUserIn():
 
     if checkForCredentials(login, password):
         return login, password
-    else:
-        errorOccured("This user does not exits")
-        return None, None
+
+    errorOccured("This user does not exits")
+    return None, None
 
 
 def createAccout():
@@ -47,7 +47,7 @@ def createAccout():
         return None, None
     del cDialog
 
-    if password == "" or login == "":
+    if password or login:
         errorOccured("Fill all fields!!")
         return
 
@@ -86,15 +86,15 @@ def cameraChoice() -> int:
     camDialog.exec()
     if camDialog.result() == 0:
         return -1
-    else:
-        return camDialog.deviceComboBox.currentIndex()
+    return camDialog.deviceComboBox.currentIndex()
 
 
 def getFolderPath(parent) -> str:
     # note: in windows 10, we need to pass parent reference to
     # the function. Otherwise QFileDialog will emit a silent crash
     return QFileDialog.getExistingDirectory(
-        parent, options=QFileDialog.DontUseNativeDialog)
+        parent, options=QFileDialog.DontUseNativeDialog
+    )
 
 
 class InfoDialog(QDialog):
@@ -154,7 +154,7 @@ class LoginDialog(QDialog):
         self.passText.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
 
         self.dialogButtons = QDialogButtonBox()
-        self.loginText.setFixedSize(170,30)
+        self.loginText.setFixedSize(170, 30)
         self.dialogButtons.setStandardButtons(
             QDialogButtonBox.Cancel | QDialogButtonBox.Ok
         )
@@ -184,7 +184,7 @@ class LoginDialog(QDialog):
 class CreateAccountDialog(QDialog):
     def __init__(self):
         super().__init__(None, Qt.WindowSystemMenuHint | Qt.WindowTitleHint)
-        
+
         self.lo = QFormLayout(self)
         self.loginText = QLineEdit()
         self.loginText.setFixedWidth(170)
@@ -223,7 +223,7 @@ class CreateAccountDialog(QDialog):
             Qt.AlignLeading | Qt.AlignLeft | Qt.AlignTop
         )
         self.passRepLabel.setWordWrap(True)
-        
+
         self.lo.addRow(self.titleLabel)
         self.lo.addRow(self.loginLabel, self.loginText)
         self.lo.addRow(self.passLabel, self.passText)
