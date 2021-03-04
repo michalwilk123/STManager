@@ -41,6 +41,10 @@ def createAccout():
     login = cDialog.loginText.text()
     password = cDialog.passText.text()
     pass2 = cDialog.passRepText.text()
+    
+    if cDialog.result() == 0:
+        return
+
     del cDialog
 
     if password == "" or login == "":
@@ -141,12 +145,16 @@ class LoginDialog(QDialog):
         super().__init__()
         self.setFixedSize(260, 170)
         self.loginText = QLineEdit(self)
-        self.loginText.setGeometry(QRect(80, 50, 170, 30))
+        self.loginText.move(80, 50)
+        self.loginText.setFixedWidth(170)
+        # self.loginText.setGeometry(QRect(80, 50, 170, 30))
         self.loginText.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
 
         self.passText = QLineEdit(self)
         self.passText.setEchoMode(QLineEdit.Password)
-        self.passText.setGeometry(QRect(80, 90, 170, 30))
+        self.passText.move(80,90)
+        self.passText.setFixedWidth(170)
+        # self.passText.setGeometry(QRect(80, 90, 170, 30))
         self.passText.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
 
         self.dialogButtons = QDialogButtonBox(self)

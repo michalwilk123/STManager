@@ -19,10 +19,18 @@ class ProductManagerFrame(QFrame):
         self.scrollArea = ScrollPreviewComponent(self)
 
         self.productBarcode = QLineEdit(self)
-        self.productBarcode.setGeometry(QRect(10, 340, 310, 30))
+        self.productBarcode.setFixedWidth(310)
+        self.productBarcode.move(10,340)
+        # self.productBarcode.setGeometry(QRect(10, 340, 310, 30))
 
         self.productDescription = QTextEdit(self)
-        self.productDescription.setGeometry(QRect(10, 380, 310, 190))
+        s = self.productBarcode.size()
+        p = self.productBarcode.pos()
+        x0, y0, = 320, 570 # coords of the SE point of the Rect
+        self.productDescription.setGeometry(
+            QRect(
+                10, p.y() + s.height(), 
+                x0 - 10, y0 - p.y() - s.height()))
 
         self.confirmButton = QPushButton(parent=self, text="Save")
         self.confirmButton.setGeometry(QRect(160, 580, 160, 50))
