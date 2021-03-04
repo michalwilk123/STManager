@@ -28,7 +28,7 @@ def findProducts(
     phrase: str = None,
     timeFrom: str = None,
     timeTo: str = None,
-    tags: list[str] = None,
+    tags: str = None,
     username: str = None,
 ):
     """

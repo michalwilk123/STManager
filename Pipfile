@@ -10,8 +10,8 @@ opencv-python-headless = "*"
 pyzbar = "*"
 playsound = "*"
 vext = "*"
-pywin32 = "*"
-pyinstaller = {file = "https://github.com/pyinstaller/pyinstaller/archive/develop.tar.gz"}
+pywin32 = {version = "*", sys_platform = "== 'win32'"}
+pyinstaller = "*"
 
 [dev-packages]
 

@@ -2,7 +2,6 @@ all:
 	@pipenv run python -m fbs run
 
 install:
-	@git clean
 	@pipenv install
 
 lint:
