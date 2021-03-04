@@ -2,5 +2,5 @@
     "app_name": "STManager",
     "author": "Michal Wilk",
     "main_module": "src/main/python/main.py",
-    "version": "0.1.0"
+    "version": "0.1.1"
 }

@@ -47,7 +47,8 @@ class AppView(QMainWindow):
         # Actions choices
         self.selectFolderAction = QAction(parent=self, text="Select Folder")
         self.showProductsAction = QAction(
-            parent=self, text="Show products (S)")
+            parent=self, text="Show products (S)"
+        )
         self.photoAction = QAction(parent=self, text="Photo (P)")
         self.selectCameraAction = QAction(parent=self, text="Change camera")
         self.changeUserAction = QAction(parent=self, text="Change user")
@@ -68,7 +69,7 @@ class AppView(QMainWindow):
         self.menubar.addAction(self.settingsMenu.menuAction())
         self.menubar.addAction(self.aboutMenu.menuAction())
 
-        self.setWindowTitle("STManager 2021 - version 0.0.2")
+        self.setWindowTitle("STManager 2021 - version 0.1.1")
         self.setup()
 
     def getPhotoDestinationPath(self):
@@ -76,7 +77,8 @@ class AppView(QMainWindow):
 
     def updateStatusbar(self):
         self.statusUser.setText(
-            f"Logged as user {self.controller.getUsername()}")
+            f"Logged as user {self.controller.getUsername()}"
+        )
 
     def setup(self):
         self.controller = AppController(self)
@@ -92,10 +94,12 @@ class AppView(QMainWindow):
         self.productManagerFrame.cancelButton.clicked.connect(
             self.controller.deleteCurrentProduct
         )
-        self.settingButtonsFrame.photoButton\
-            .clicked.connect(self.controller.takePhoto)
-        self.settingButtonsFrame.showProductsButton\
-            .clicked.connect(self.searchProducts)
+        self.settingButtonsFrame.photoButton.clicked.connect(
+            self.controller.takePhoto
+        )
+        self.settingButtonsFrame.showProductsButton.clicked.connect(
+            self.searchProducts
+        )
         self.settingButtonsFrame.changeUserButton.clicked.connect(
             self.controller.switchUser
         )
@@ -111,7 +115,8 @@ class AppView(QMainWindow):
 
         # connecting actions buttons singals
         self.selectFolderAction.triggered.connect(
-            self.controller.changeSaveUrl)
+            self.controller.changeSaveUrl
+        )
         self.showProductsAction.triggered.connect(self.searchProducts)
         self.photoAction.triggered.connect(self.controller.takePhoto)
         self.selectCameraAction.triggered.connect(self.showCameraChoice)
@@ -119,7 +124,8 @@ class AppView(QMainWindow):
         self.createUserAction.triggered.connect(createAccout)
         self.authorAction.triggered.connect(showInfo)
         self.scannerModeAction.triggered.connect(
-            self.controller.toggleScannerMode)
+            self.controller.toggleScannerMode
+        )
 
         if self.controller.getScannerMode():
             self.scannerModeAction.setChecked(True)
@@ -128,8 +134,7 @@ class AppView(QMainWindow):
         key = k.key()
         if key == Qt.Key_P:
             self.controller.takePhoto()
-        elif key == Qt.Key_Enter\
-                and self.controller.getScannerMode():
+        elif key == Qt.Key_Enter and self.controller.getScannerMode():
             self.controller.saveCurrentProduct()
         elif key == Qt.Key_Delete:
             self.controller.deleteCurrentProduct()

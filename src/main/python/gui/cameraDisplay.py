@@ -48,6 +48,7 @@ class CameraPreviewThread(QThread):
         spacingCounter = 0
         barcodes = []
         from appContext import context
+
         beepSoundPath = context.get_resource("beep.mp3")
 
         while (
@@ -62,8 +63,10 @@ class CameraPreviewThread(QThread):
                 CameraPreviewThread._save_seq += 1
                 CameraPreviewThread.pictureRequest = False
 
-            if CameraPreviewThread.newProduct and\
-                    not CameraPreviewThread.scannerMode:
+            if (
+                CameraPreviewThread.newProduct
+                and not CameraPreviewThread.scannerMode
+            ):
 
                 if spacingCounter == FRAMES_BEETWEEN_SCANS and ret:
                     # looking for barcode in camera input
@@ -88,8 +91,7 @@ class CameraPreviewThread(QThread):
                     )
                     CameraPreviewThread.newProduct = False
                     barcodes = []
-                    CameraPreviewThread.top.top.controller\
-                        .saveCurrentProduct()
+                    CameraPreviewThread.top.top.controller.saveCurrentProduct()
 
             if ret:
                 rgbImage = cv2.resize(
@@ -153,9 +155,8 @@ class CameraDisplayFrame(QFrame):
         timestamp = time.strftime("%d-%m-%Y-%H_%M_%S")
         CameraPreviewThread.currentPath = os.path.join(
             savePath,
-            "%s-%04d-%s.jpg" % (
-                username, CameraPreviewThread._save_seq, timestamp
-            ),
+            "%s-%04d-%s.jpg"
+            % (username, CameraPreviewThread._save_seq, timestamp),
         )
         CameraPreviewThread.user = username
         CameraPreviewThread.pictureRequest = True

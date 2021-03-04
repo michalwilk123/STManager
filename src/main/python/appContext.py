@@ -4,6 +4,4 @@ from PyQt5.QtGui import QPixmap
 context = ApplicationContext()
 
 noImagePixmap = QPixmap()
-noImagePixmap.load(
-    context.get_resource("noImageAvailable.png")
-)
+noImagePixmap.load(context.get_resource("noImageAvailable.png"))
