@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import (
     QStatusBar,
     QMenuBar,
     QLabel,
+    QGridLayout
 )
 from gui.productManager import ProductManagerFrame
 from gui.settingsButtons import SettingsButtonsFrame
@@ -19,15 +20,31 @@ class AppView(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.setFixedSize(1100, 700)
+        # self.setMinimumSize(900, 640)
+        # 700 is base height + (menubar.width + statusbar.width)
         self.cameraChoice = 0
-
-        self.centralwidget = QWidget(self)
+        self.cWidget = QWidget()
+        self.layout = QGridLayout(self.cWidget)
+        
         self.productManagerFrame = ProductManagerFrame(self)
         self.settingButtonsFrame = SettingsButtonsFrame(self)
         self.cameraDisplayFrame = CameraDisplayFrame(self)
 
-        self.setCentralWidget(self.centralwidget)
+        self.layout.addWidget(
+            self.cameraDisplayFrame,
+            0, 0, 12,2
+        )
+        self.layout.addWidget(
+            self.productManagerFrame,
+            0,2,13,1
+        )
+        self.layout.addWidget(
+            self.settingButtonsFrame,
+            12,0,1,2
+        )
+        
+
+        self.setCentralWidget(self.cWidget)
         self.menubar = QMenuBar(self)
         self.menubar.setGeometry(QRect(0, 0, 1100, 30))
         self.settingsMenu = QMenu("Settings", self.menubar)

@@ -12,7 +12,7 @@ from PyQt5.QtWidgets import (
     QWidget,
     QLabel,
 )
-from PyQt5.QtCore import QRect, Qt, QSize
+from PyQt5.QtCore import QRect, Qt
 from PyQt5.QtGui import QPixmap
 from utils.DialogCollection import errorOccured
 from appContext import noImagePixmap
@@ -20,12 +20,12 @@ from appContext import noImagePixmap
 
 class ScrollPreviewComponent(QFrame):
     def __init__(self, top):
-        super().__init__(top)
+        super().__init__()
         self.top = top
-        self.resize(350, 330)
-        self.setMaximumSize(QSize(350, 330))
+        self.setMinimumSize(380, 330)
+        self.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
         self.scroll = QScrollArea(self)
-        self.scroll.setGeometry(QRect(0, 0, 330, 330))
+        self.scroll.setFixedSize(380,330)
 
         self.scroll.setMinimumHeight(100)
         self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
@@ -71,7 +71,7 @@ class ItemPreviewComponent(QFrame):
         if ItemPreviewComponent.parent is None:
             ItemPreviewComponent.parent = parent
 
-        self.setFixedSize(QSize(300, 80))
+        self.setFixedHeight(80)
         self.imgPath = imgPath
         self.label = QLabel(description, self)
         self.label.setGeometry(QRect(110, 10, 130, 60))
@@ -83,7 +83,7 @@ class ItemPreviewComponent(QFrame):
         self.delButton.setStyleSheet(
             """
 color: red;
-font: 75 20pt "Noto Sans";
+font: 75 20pt;
 """
         )
         self.delButton.setFlat(True)

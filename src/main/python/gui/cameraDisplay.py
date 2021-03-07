@@ -2,7 +2,7 @@
 Managing camera input and barcode detection
 """
 from __future__ import annotations
-from PyQt5.QtWidgets import QFrame, QLabel
+from PyQt5.QtWidgets import QFrame, QLabel, QSizePolicy
 from PyQt5.QtCore import QRect, Qt, QThread, pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QImage, QPixmap
 from config.macros import FRAME_RATE, FRAMES_BEETWEEN_SCANS
@@ -121,13 +121,14 @@ class CameraDisplayFrame(QFrame):
         top - appView to connect component to
         the rest of the application
         """
-        super().__init__(top.centralwidget)
+        super().__init__()
         self.top = top
-        self.setGeometry(QRect(10, 10, 740, 570))
+        self.setMinimumSize(800,640)
         self.setAutoFillBackground(False)
         self.setFrameShape(QFrame.StyledPanel)
         self.setFrameShadow(QFrame.Raised)
         self.setObjectName("cameraDisplayFrame")
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         # UNCOMMENT BELOW COMMENT FOR CAMERA OUTPUT
         self.initUI()
 
@@ -136,7 +137,8 @@ class CameraDisplayFrame(QFrame):
         Initializing live camera preview
         """
         self.label = QLabel(self)
-        self.label.setGeometry(QRect(0, 0, self.width(), self.height()))
+        self.label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.label.setMinimumSize(self.width(), self.height())
 
         self.cameraThread = CameraPreviewThread(
             self, self.width(), self.height(), deviceNum=0
