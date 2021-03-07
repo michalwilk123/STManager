@@ -18,17 +18,6 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 
-
-def getConfigFileInfo():
-    cDialog = ConfigDialog()
-    cDialog.exec()
-    path = "path"
-    login = "login"
-    password = "pass"
-
-    return path, login, password
-
-
 def logUserIn():
     lDialog = LoginDialog()
     lDialog.exec()
@@ -49,7 +38,7 @@ def logUserIn():
     return None, None
 
 
-def createAccout():
+def createAccount():
     cDialog = CreateAccountDialog()
     cDialog.exec()
     login = cDialog.loginText.text()
@@ -267,91 +256,3 @@ class CameraChooserDialog(QDialog):
         self.setWindowTitle("Choose a device")
         self.dialogButtons.accepted.connect(lambda: self.done(1))
         self.dialogButtons.rejected.connect(lambda: self.done(0))
-
-
-class ConfigDialog(QDialog):
-    def __init__(self):
-        """
-        I expect that at moment of execution of the method,
-        the config file does not exits or needs to be removed
-        """
-        super().__init__(None, Qt.WindowCloseButtonHint | Qt.WindowSystemMenuHint)
-        self.lo = QFormLayout(self)
-
-        sfont = QFont()
-        sfont.setPointSize(7)
-        self.instructionLabel = QLabel(
-            "Choose a location for the configuration file"
-            " and first user credentials dsaddddddddddd")
-        self.instructionLabel.setWordWrap(True)
-        self.instructionLabel.setFont(sfont)
-        
-        self.fileFrame = QWidget()
-        self.fileLedit = QLineEdit(parent=self.fileFrame)
-        self.fileLedit.setFixedWidth(240)
-        self.fileFrame.setFixedSize(270, self.fileLedit.height())
-        self.fileLedit.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        self.fileButton = QPushButton(self.fileFrame, text="…")
-        self.fileButton.setStyleSheet("padding:3px;")
-        self.fileButton.move(250 ,0)
-        self.fileButton.clicked.connect(self.fileButtonClicked)
-
-        from misc.paths import getDefConfigPath
-        self.fileLedit.setText(getDefConfigPath())
-
-        self.loginText = QLineEdit()
-        self.loginText.setFixedWidth(170)
-        self.loginText.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-
-        self.passText = QLineEdit()
-        self.passText.setEchoMode(QLineEdit.Password)
-        self.passText.setFixedWidth(170)
-        self.passText.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-
-        self.passRepText = QLineEdit()
-        self.passRepText.setEchoMode(QLineEdit.Password)
-        self.passRepText.setFixedWidth(170)
-        self.passRepText.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-
-        self.dialogButtons = QDialogButtonBox()
-        self.dialogButtons.setFixedWidth(170)
-        self.dialogButtons.setStandardButtons(
-            QDialogButtonBox.Cancel | QDialogButtonBox.Ok
-        )
-
-        bfont = QFont()
-        bfont.setPointSize(12)
-        bfont.setBold(True)
-        self.titleLabel = QLabel("Configuration")
-        self.titleLabel.setFont(bfont)
-
-        self.loginLabel = QLabel("Login:")
-
-        self.passLabel = QLabel("Password:")
-
-        self.passRepLabel = QLabel("Repeat password:")
-        self.passRepLabel.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        self.passRepLabel.setAlignment(
-            Qt.AlignLeading | Qt.AlignLeft | Qt.AlignTop
-        )
-        self.passRepLabel.setWordWrap(True)
-
-        self.lo.addRow(self.titleLabel)
-        self.lo.addRow(self.instructionLabel)
-        self.lo.addRow(self.fileFrame)
-        self.lo.addRow(self.loginLabel, self.loginText)
-        self.lo.addRow(self.passLabel, self.passText)
-        self.lo.addRow(self.passRepLabel, self.passRepText)
-        self.lo.addRow(None, self.dialogButtons)
-        self.lo.setVerticalSpacing(10)
-
-        self.setWindowTitle("Configuration")
-        self.dialogButtons.accepted.connect(lambda: self.done(1))
-        self.dialogButtons.rejected.connect(lambda: self.done(0))
-        # TODO: add failsafe -> throw error when user creates filename which is used
-        # or when path is showing the directory
-
-    
-    def fileButtonClicked(self):
-        if dPath := getFolderPath(self):
-            self.fileLedit.setText(dPath)

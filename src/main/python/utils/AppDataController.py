@@ -116,9 +116,22 @@ def getAllData(debug: bool = False):
         with open(context.get_resource("appData.json"), "r") as dataFile:
             data = json.loads(dataFile.read())
     except FileNotFoundError:
+        """
+        CONFIG FILE DOES NOT EXIST
+        """
         if not debug:
             from config.macros import APPDATA_SKELETON
             from os import path
+            from utils.DialogCollection import getConfigFileInfo
+            import misc.pathOperations as po
+
+            if npath := po.checkForOldConfiguration():
+                pass
+            else:
+                l, p = createAccount()
+                savePath = getFolderPath()
+                cPath = po.getDefConfigPath()
+                createConfig(p, l, p1)
 
             npath = path.join(context.get_resource(), "appData.json")
 
@@ -179,3 +192,12 @@ def compareDatetimes(date_0: str, date_1: str):
     hour1 = [int(i) for i in hour1.split("_")]
     res = hour0 < hour1
     return -1 if res else 1
+
+
+def createConfig(path:str, login:str, password:str) -> bool:
+    """
+    Creates config file with recieved parameters.
+    Returns result of the function: True if 
+    successful.
+    """
+    pass

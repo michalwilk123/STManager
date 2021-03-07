@@ -13,7 +13,7 @@ from gui.productManager import ProductManagerFrame
 from gui.settingsButtons import SettingsButtonsFrame
 from gui.cameraDisplay import CameraDisplayFrame
 from utils.AppController import AppController
-from utils.DialogCollection import showInfo, cameraChoice, createAccout
+from utils.DialogCollection import showInfo, cameraChoice, createAccount
 
 
 class AppView(QMainWindow):
@@ -138,7 +138,7 @@ class AppView(QMainWindow):
         self.photoAction.triggered.connect(self.controller.takePhoto)
         self.selectCameraAction.triggered.connect(self.showCameraChoice)
         self.changeUserAction.triggered.connect(self.controller.switchUser)
-        self.createUserAction.triggered.connect(createAccout)
+        self.createUserAction.triggered.connect(createAccount)
         self.authorAction.triggered.connect(showInfo)
         self.scannerModeAction.triggered.connect(
             self.controller.toggleScannerMode
