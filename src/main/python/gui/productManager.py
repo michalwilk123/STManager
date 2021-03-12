@@ -13,7 +13,8 @@ class ProductManagerFrame(QFrame):
         super().__init__()
         self.top = top
         # self.setGeometry(QRect(760, 10, 330, 640))
-        self.setMinimumSize(380, 700)
+        self.setFixedWidth(400)
+        self.setMinimumHeight(700)
         self.setFrameShape(QFrame.StyledPanel)
         self.setFrameShadow(QFrame.Raised)
         self.layout = QFormLayout(self)

@@ -4,7 +4,7 @@ Managing camera input and barcode detection
 from __future__ import annotations
 from PyQt5.QtWidgets import QFrame, QLabel, QSizePolicy
 from PyQt5.QtCore import QRect, Qt, QThread, pyqtSlot, pyqtSignal
-from PyQt5.QtGui import QImage, QPixmap
+from PyQt5.QtGui import QImage, QPixmap, QResizeEvent
 from config.macros import FRAME_RATE, FRAMES_BEETWEEN_SCANS
 from pyzbar import pyzbar
 from playsound import playsound
@@ -137,6 +137,8 @@ class CameraDisplayFrame(QFrame):
         Initializing live camera preview
         """
         self.label = QLabel(self)
+        self.label.setAlignment(Qt.AlignTop)
+
         self.label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.label.setMinimumSize(self.width(), self.height())
 
@@ -146,12 +148,23 @@ class CameraDisplayFrame(QFrame):
         self.cameraThread.change_pixmap.connect(self.setImage)
         self.cameraThread.start()
 
+        self.resizeEvent = self.cameraDisplayResize
+
     def setScannerMode(self, mode: bool):
         CameraPreviewThread.scannerMode = mode
 
     @pyqtSlot(QImage)
     def setImage(self, image):
         self.label.setPixmap(QPixmap.fromImage(image))
+
+    def cameraDisplayResize(self, e):
+        """
+        Method that executes when widget is resized
+        """
+        CameraPreviewThread.width = self.width()
+        CameraPreviewThread.height = self.height()
+        self.label.setMinimumHeight(self.height())
+        self.label.setMinimumWidth(self.width())
 
     def takePicture(self, savePath: str, username: str = "Anonim"):
         timestamp = time.strftime("%d-%m-%Y-%H_%M_%S")

@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import (
     QPushButton,
     QSizePolicy,
     QVBoxLayout,
+    QHBoxLayout,
     QSpacerItem,
     QScrollArea,
     QWidget,
@@ -34,7 +35,7 @@ class ScrollPreviewComponent(QFrame):
         self.scroll.setAlignment(Qt.AlignLeading | Qt.AlignLeft | Qt.AlignTop)
 
         self.scrollContents = QWidget()
-        self.scrollContents.setGeometry(QRect(0, 0, 350, 330))
+        self.scrollContents.setGeometry(QRect(0, 0, 380, 330))
         self.spacer = QSpacerItem(
             20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding
         )
@@ -72,14 +73,20 @@ class ItemPreviewComponent(QFrame):
             ItemPreviewComponent.parent = parent
 
         self.setFixedHeight(80)
+        self.setFixedWidth(350)
+        self.layout = QHBoxLayout(self)
+        self.layout.setSpacing(10)
+
         self.imgPath = imgPath
-        self.label = QLabel(description, self)
-        self.label.setGeometry(QRect(110, 10, 130, 60))
+        self.label = QLabel(description)
+        self.label.setSizePolicy(
+            QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.label.setAlignment(Qt.AlignLeading | Qt.AlignLeft | Qt.AlignTop)
         self.label.setWordWrap(True)
 
-        self.delButton = QPushButton(text="X", parent=self)
-        self.delButton.setGeometry(QRect(260, 10, 30, 60))
+        self.delButton = QPushButton(text="X")
+        self.delButton.setFixedWidth(30)
+        # self.delButton.setGeometry(QRect(260, 10, 30, 60))
         self.delButton.setStyleSheet(
             """
 color: red;
@@ -89,13 +96,13 @@ font: 75 20pt;
         self.delButton.setFlat(True)
         self.delButton.clicked.connect(self.delButtonClicked)
 
-        self.thbSeparator = QFrame(self)
-        self.thbSeparator.setGeometry(QRect(100, 10, 5, 60))
+        self.thbSeparator = QFrame()
+        # self.thbSeparator.setGeometry(QRect(100, 10, 5, 60))
         self.thbSeparator.setFrameShape(QFrame.VLine)
         self.thbSeparator.setFrameShadow(QFrame.Sunken)
 
-        self.thbLabel = QLabel(self)
-        self.thbLabel.setGeometry(QRect(10, 10, 80, 60))
+        self.thbLabel = QLabel()
+        # self.thbLabel.setGeometry(QRect(10, 10, 80, 60))
         self.thbLabel.setWordWrap(True)
 
         pixmap = QPixmap()
@@ -106,10 +113,16 @@ font: 75 20pt;
             pixmap.scaled(80, 60, Qt.IgnoreAspectRatio, Qt.FastTransformation)
         )
 
-        self.delSeparator = QFrame(self)
-        self.delSeparator.setGeometry(QRect(250, 10, 5, 60))
+        self.delSeparator = QFrame()
+        # self.delSeparator.setGeometry(QRect(250, 10, 5, 60))
         self.delSeparator.setFrameShape(QFrame.VLine)
         self.delSeparator.setFrameShadow(QFrame.Sunken)
+
+        self.layout.addWidget(self.thbLabel)
+        self.layout.addWidget(self.thbSeparator)
+        self.layout.addWidget(self.label)
+        self.layout.addWidget(self.delSeparator)
+        self.layout.addWidget(self.delButton)
 
         self.setFrameStyle(QFrame.StyledPanel)
 

@@ -13,7 +13,8 @@ class SettingsButtonsFrame(QFrame):
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
         self.layout = QHBoxLayout(self)
-        self.setMinimumSize(800,40)
+        # self.setMinimumSize(800,40)
+        self.setFixedSize(800,40)
         self.setFrameShape(QFrame.StyledPanel)
         self.setFrameShadow(QFrame.Raised)
 
