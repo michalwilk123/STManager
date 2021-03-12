@@ -86,7 +86,6 @@ class ItemPreviewComponent(QFrame):
 
         self.delButton = QPushButton(text="X")
         self.delButton.setFixedWidth(30)
-        # self.delButton.setGeometry(QRect(260, 10, 30, 60))
         self.delButton.setStyleSheet(
             """
 color: red;
@@ -97,12 +96,10 @@ font: 75 20pt;
         self.delButton.clicked.connect(self.delButtonClicked)
 
         self.thbSeparator = QFrame()
-        # self.thbSeparator.setGeometry(QRect(100, 10, 5, 60))
         self.thbSeparator.setFrameShape(QFrame.VLine)
         self.thbSeparator.setFrameShadow(QFrame.Sunken)
 
         self.thbLabel = QLabel()
-        # self.thbLabel.setGeometry(QRect(10, 10, 80, 60))
         self.thbLabel.setWordWrap(True)
 
         pixmap = QPixmap()
@@ -114,7 +111,6 @@ font: 75 20pt;
         )
 
         self.delSeparator = QFrame()
-        # self.delSeparator.setGeometry(QRect(250, 10, 5, 60))
         self.delSeparator.setFrameShape(QFrame.VLine)
         self.delSeparator.setFrameShadow(QFrame.Sunken)
 

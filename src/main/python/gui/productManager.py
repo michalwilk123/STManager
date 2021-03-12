@@ -12,7 +12,6 @@ class ProductManagerFrame(QFrame):
     def __init__(self, top):
         super().__init__()
         self.top = top
-        # self.setGeometry(QRect(760, 10, 330, 640))
         self.setFixedWidth(400)
         self.setMinimumHeight(700)
         self.setFrameShape(QFrame.StyledPanel)
@@ -24,7 +23,6 @@ class ProductManagerFrame(QFrame):
 
         self.productBarcode = QLineEdit()
         self.productBarcode.setMinimumWidth(310)
-        # self.productBarcode.setGeometry(QRect(10, 340, 310, 30))
 
         self.productDescription = QTextEdit()
         self.productDescription.setMinimumHeight(270)
@@ -34,11 +32,9 @@ class ProductManagerFrame(QFrame):
 
         self.confirmButton = QPushButton(text="Save")
         self.confirmButton.setMinimumSize(160,40)
-        # self.confirmButton.setGeometry(QRect(160, 580, 160, 50))
 
         self.cancelButton = QPushButton(text="Delete")
         self.cancelButton.setMinimumSize(140,40)
-        # self.cancelButton.setGeometry(QRect(10, 580, 140, 50))
 
         self.layout.addRow(self.scrollArea)
         self.layout.addRow(self.productBarcode)
