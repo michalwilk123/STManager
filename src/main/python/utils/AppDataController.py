@@ -2,8 +2,11 @@
 Operations with the json file. Creates account. Executes json pseudo queries
 """
 from appContext import context
+import misc.pathOperations as pathOper
 import json
 import time
+
+CONFIG_FILE_PATH = pathOper.findConfigFilePath()
 
 
 def createNewUser(username: str, password: str):
@@ -90,12 +93,6 @@ def checkForCredentials(
     return False
 
 
-def getConfiguration():
-    with open(context.get_resource("appData.json"), "r") as dataFile:
-        configuration = json.loads(dataFile.read())["configuration"]
-    return configuration
-
-
 def createNullProduct(index: int):
     return {
         "index": index,
@@ -151,8 +148,15 @@ def getAllData(debug: bool = False):
 
 
 def setNewData(data):
-    with open(context.get_resource("appData.json"), "w") as oldData:
-        oldData.write(json.dumps(data))
+    try:
+        with open(context.get_resource("appData.json"), "w") as oldData:
+            oldData.write(json.dumps(data))
+    except OSError:
+        """
+        No permission to modify data
+        """
+        pass
+
 
 
 def getUsrList():
@@ -192,12 +196,3 @@ def compareDatetimes(date_0: str, date_1: str):
     hour1 = [int(i) for i in hour1.split("_")]
     res = hour0 < hour1
     return -1 if res else 1
-
-
-def createConfig(path:str, login:str, password:str) -> bool:
-    """
-    Creates config file with recieved parameters.
-    Returns result of the function: True if 
-    successful.
-    """
-    pass
