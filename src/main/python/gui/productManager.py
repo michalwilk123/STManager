@@ -11,7 +11,6 @@ from PyQt5.QtWidgets import (
     QFormLayout,
     QSizePolicy,
 )
-from PyQt5.QtCore import QRect
 from gui.scrollableProductComponent import ScrollPreviewComponent
 
 

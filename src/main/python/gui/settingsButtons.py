@@ -2,7 +2,6 @@
 Buttons located on the bottom of the app
 """
 from PyQt5.QtWidgets import QFrame, QPushButton, QHBoxLayout, QSizePolicy
-from PyQt5.QtCore import QRect
 
 
 class SettingsButtonsFrame(QFrame):

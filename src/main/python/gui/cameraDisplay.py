@@ -3,8 +3,8 @@ Managing camera input and barcode detection
 """
 from __future__ import annotations
 from PyQt5.QtWidgets import QFrame, QLabel, QSizePolicy
-from PyQt5.QtCore import QRect, Qt, QThread, pyqtSlot, pyqtSignal
-from PyQt5.QtGui import QImage, QPixmap, QResizeEvent
+from PyQt5.QtCore import Qt, QThread, pyqtSlot, pyqtSignal
+from PyQt5.QtGui import QImage, QPixmap
 from config.macros import FRAME_RATE, FRAMES_BEETWEEN_SCANS
 from pyzbar import pyzbar
 from playsound import playsound

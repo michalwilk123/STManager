@@ -1,7 +1,6 @@
 """
 Operations with the json file. Creates account. Executes json pseudo queries
 """
-from appContext import context
 import misc.pathOperations as pathOper
 import json
 import time
