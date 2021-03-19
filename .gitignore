@@ -1,5 +1,6 @@
 .vscode/*
 /.venv
+/.mypy_cache
 /temp
 *.jpg
 *.pyc
