@@ -1,11 +1,10 @@
 """
 Operations with the json file. Creates account. Executes json pseudo queries
 """
+from config.macros import CONFIG_FILE_PATH
 import misc.pathOperations as pathOper
 import json
 import time
-
-CONFIG_FILE_PATH = pathOper.findConfigFilePath()
 
 
 def createNewUser(username: str, password: str):
@@ -104,25 +103,27 @@ def createNullProduct(index: int):
     }
 
 
+def resolveConfigFile(debug: bool = False):
+    """
+    Fix problems with the configuration file.
+    Returns string with new file location
+    """
+    if debug:
+        print("Config file does not exist! Creating new one")
+    CONFIG_FILE_PATH = pathOper.createConfigFile()
+    if debug:
+        print(f"File created at {CONFIG_FILE_PATH}")
+
+
 def getAllData(debug: bool = False):
     """
     Get all app data in form of dictionary
     """
-    global CONFIG_FILE_PATH
-
     try:
         with open(CONFIG_FILE_PATH, "r") as dataFile:
             data = json.loads(dataFile.read())
     except (FileNotFoundError, TypeError):
-        """
-        CONFIG FILE DOES NOT EXIST
-        """
-        if debug:
-            print("Config file does not exist! Creating new one")
-        CONFIG_FILE_PATH = pathOper.createConfigFile()
-
-        if debug:
-            print(f"File created at {CONFIG_FILE_PATH}")
+        resolveConfigFile()
         return getAllData(debug)
 
     return data
@@ -132,11 +133,13 @@ def setNewData(data):
     try:
         with open(CONFIG_FILE_PATH, "w") as oldData:
             oldData.write(json.dumps(data))
-    except OSError:
-        """
-        No permission to modify data
-        """
-        pass
+    except OSError as e:
+        from utils.DialogCollection import errorOccured
+        errorOccured("No permission to access config file!")
+        raise e(f"NO PERMISSION TO ACCESS {CONFIG_FILE_PATH} FILE")
+    except (FileNotFoundError, TypeError):
+        resolveConfigFile()
+        setNewData(data)
 
 
 def getUsrList():

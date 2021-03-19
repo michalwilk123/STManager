@@ -24,7 +24,7 @@ def logUserIn():
     password = lDialog.passText.text()
     if lDialog.result() == 0:
         return None, None
-    if login or password:
+    if not (password or login):
         errorOccured("Fill all fields!!")
         return None, None
 
