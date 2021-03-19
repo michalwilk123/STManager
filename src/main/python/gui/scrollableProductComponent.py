@@ -26,7 +26,7 @@ class ScrollPreviewComponent(QFrame):
         self.setMinimumSize(380, 330)
         self.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
         self.scroll = QScrollArea(self)
-        self.scroll.setFixedSize(380,330)
+        self.scroll.setFixedSize(380, 330)
 
         self.scroll.setMinimumHeight(100)
         self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
@@ -79,8 +79,7 @@ class ItemPreviewComponent(QFrame):
 
         self.imgPath = imgPath
         self.label = QLabel(description)
-        self.label.setSizePolicy(
-            QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.label.setAlignment(Qt.AlignLeading | Qt.AlignLeft | Qt.AlignTop)
         self.label.setWordWrap(True)
 

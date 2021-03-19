@@ -6,7 +6,7 @@ import time
 
 class AppController:
     def __init__(self, view):
-        data = adc.getAllData()
+        data = adc.getAllData(debug=True)
         self.username = data["configuration"]["loggedUser"]
         self.scannerMode = data["configuration"]["scanner_mode"]
         self.savePath = data["configuration"]["savePath"]

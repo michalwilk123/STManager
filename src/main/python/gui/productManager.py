@@ -3,7 +3,14 @@ All components to the right of the main
 app view
 """
 from __future__ import annotations
-from PyQt5.QtWidgets import QFrame, QPushButton, QTextEdit, QLineEdit, QFormLayout, QSizePolicy
+from PyQt5.QtWidgets import (
+    QFrame,
+    QPushButton,
+    QTextEdit,
+    QLineEdit,
+    QFormLayout,
+    QSizePolicy,
+)
 from PyQt5.QtCore import QRect
 from gui.scrollableProductComponent import ScrollPreviewComponent
 
@@ -31,10 +38,10 @@ class ProductManagerFrame(QFrame):
         )
 
         self.confirmButton = QPushButton(text="Save")
-        self.confirmButton.setMinimumSize(160,40)
+        self.confirmButton.setMinimumSize(160, 40)
 
         self.cancelButton = QPushButton(text="Delete")
-        self.cancelButton.setMinimumSize(140,40)
+        self.cancelButton.setMinimumSize(140, 40)
 
         self.layout.addRow(self.scrollArea)
         self.layout.addRow(self.productBarcode)

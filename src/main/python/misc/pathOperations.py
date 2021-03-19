@@ -1,19 +1,22 @@
 import pathlib
 import os
+import time
+import json
 from fbs_runtime import platform
 
 CONFIG_FILE_FILENAME = "appData.json"
 
+
 def findConfigFilePath() -> str:
     """
-    Looks for config file from default location. 
+    Looks for config file from default location.
     Diffrent behaviour per platform
     If found one -> returns path, otherwise
     returns None.
 
     Windows:
-    1) AppData\Local\STManager
-    2) \User\.stmanager
+    1) AppData\\Local\\STManager
+    2) \\User\\.stmanager
 
     Linux:
     1) /home/.config/STManager
@@ -27,30 +30,37 @@ def findConfigFilePath() -> str:
     if platform.is_windows():
         # look for config file in appData
         if os.path.exists(
-               found := p.joinpath("%APPDATA%", "Local", 
-                    "STManager", CONFIG_FILE_FILENAME)):
+            found := p.joinpath(
+                "%APPDATA%", "Local", "STManager", CONFIG_FILE_FILENAME
+            )
+        ):
             return found
         elif os.path.exists(
-               found := p.joinpath(".stmanager", CONFIG_FILE_FILENAME)):
+            found := p.joinpath(".stmanager", CONFIG_FILE_FILENAME)
+        ):
             return found
-        
-        return None # config file not found -> returning None
+
+        return None  # config file not found -> returning None
     elif platform.is_linux():
         if os.path.exists(
-            found := p.joinpath(".config", "STManager", CONFIG_FILE_FILENAME)):
+            found := p.joinpath(".config", "STManager", CONFIG_FILE_FILENAME)
+        ):
             return found
         elif os.path.exists(
-            found := p.joinpath(".stmanager", CONFIG_FILE_FILENAME)):
-        )
+            found := p.joinpath(".stmanager", CONFIG_FILE_FILENAME)
+        ):
             return found
 
         return None
 
     from utils.DialogCollection import errorOccured
-    errorOccured("Platform is not known. App is not supported on your"
-        "platform")
-    raise RuntimeError("Platform is not known. App is not supported on your"
-        "platform")
+
+    errorOccured(
+        "Platform is not known. App is not supported on your" "platform"
+    )
+    raise RuntimeError(
+        "Platform is not known. App is not supported on your" "platform"
+    )
 
 
 def createConfigFile() -> str:
@@ -60,6 +70,7 @@ def createConfigFile() -> str:
     """
     if findConfigFilePath() is not None:
         from utils.DialogCollection import errorOccured
+
         errorOccured("Trying to overwrite current config file!! Abort")
         raise RuntimeError("Trying to overwrite current config file!! Abort")
 
@@ -71,33 +82,64 @@ def createConfigFile() -> str:
         defautlDataPath = p.joinpath(".config")
     else:
         from utils.DialogCollection import errorOccured
-        errorOccured("Platform is not known. App is not supported on your"
-            "platform")
-        raise RuntimeError("Platform is not known. App is not supported on your"
-            "platform")
 
-    if os.path.exists(defautlDataPath) and os.access(defautlDataPath, os.W_OK):
+        errorOccured(
+            "Platform is not known. App is not supported on your" "platform"
+        )
+        raise RuntimeError(
+            "Platform is not known. App is not supported on your" "platform"
+        )
+
+    if os.path.exists(defautlDataPath):
         # creating folder and empty config file
-        os.mkdir(defautlDataPath := defautlDataPath.joinpath("STManager"))
-        open(defautlDataPath := defautlDataPath.joinpath(CONFIG_FILE_FILENAME)).close()
-        return defautlDataPath
-        
-    if os.access(p, os.W_OK):
-        # creating folder and empty config file
-        os.mkdir(altDataPath := p.joinpath(".stmanager"))
-        open(altDataPath := altDataPath.joinpath(CONFIG_FILE_FILENAME)).close()
-        return altDataPath
+        defautlDataPath = defautlDataPath.joinpath("STManager")
+        configPath = defautlDataPath
     else:
+        # creating folder and empty config file
+        altDataPath = p.joinpath(".stmanager")
+        configPath = altDataPath
+
+    try:
+        os.mkdir(configPath)
+    except FileExistsError:
+        pass
+
+    configPath = configPath.joinpath(CONFIG_FILE_FILENAME)
+
+    try:
+        from utils.DialogCollection import getFolderPath, askNewUser
+
+        photoDirectory = getFolderPath()
+
+        newLogin, newPassword = askNewUser()
+
+        while newLogin is None or newPassword is None:
+            newLogin, newPassword = askNewUser()
+
+        newConfigFileContent = {
+            "configuration": {
+                "loggedUser": newLogin,
+                "scanner_mode": False,
+                "savePath": photoDirectory,
+            },
+            "userData": [
+                {
+                    "username": newLogin,
+                    "password": newPassword,
+                    "created": time.strftime("%d-%m-%Y-%H_%M_%S"),
+                    "items": [],
+                }
+            ],
+        }
+
+        with open(configPath, "w") as configFile:
+            configFile.write(json.dumps(newConfigFileContent))
+        return configPath
+    except PermissionError:
         from utils.DialogCollection import errorOccured
-        errorOccured("Cannot create config file!! Check the permissions "
-            "for the application")
+
+        errorOccured(
+            "Cannot create config file!! Check the permissions "
+            "for the application"
+        )
         return None
-
-
-def testConfigFile(configFilePath:str) -> bool:
-    """
-    Check for permission of the program to modify the config file.
-
-    """
-    return  os.access(configFilePath, os.W_OK) and\
-        os.access(configFilePath, os.R_OK):

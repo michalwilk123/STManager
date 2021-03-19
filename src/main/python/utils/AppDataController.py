@@ -109,54 +109,35 @@ def getAllData(debug: bool = False):
     """
     Get all app data in form of dictionary
     """
+    global CONFIG_FILE_PATH
+
     try:
-        with open(context.get_resource("appData.json"), "r") as dataFile:
+        with open(CONFIG_FILE_PATH, "r") as dataFile:
             data = json.loads(dataFile.read())
-    except FileNotFoundError:
+    except (FileNotFoundError, TypeError):
         """
         CONFIG FILE DOES NOT EXIST
         """
-        if not debug:
-            from config.macros import APPDATA_SKELETON
-            from os import path
-            from utils.DialogCollection import getConfigFileInfo
-            import misc.pathOperations as po
+        if debug:
+            print("Config file does not exist! Creating new one")
+        CONFIG_FILE_PATH = pathOper.createConfigFile()
 
-            if npath := po.checkForOldConfiguration():
-                pass
-            else:
-                l, p = createAccount()
-                savePath = getFolderPath()
-                cPath = po.getDefConfigPath()
-                createConfig(p, l, p1)
+        if debug:
+            print(f"File created at {CONFIG_FILE_PATH}")
+        return getAllData(debug)
 
-            npath = path.join(context.get_resource(), "appData.json")
-
-            with open(npath, "w") as dataFile:
-                dataFile.write(APPDATA_SKELETON)
-                data = json.loads(APPDATA_SKELETON)
-        else:
-            from pathlib import Path
-
-            print(
-                "Error with config json file\nCurrent path: {}".format(
-                    Path().absolute()
-                )
-            )
-            return None
     return data
 
 
 def setNewData(data):
     try:
-        with open(context.get_resource("appData.json"), "w") as oldData:
+        with open(CONFIG_FILE_PATH, "w") as oldData:
             oldData.write(json.dumps(data))
     except OSError:
         """
         No permission to modify data
         """
         pass
-
 
 
 def getUsrList():

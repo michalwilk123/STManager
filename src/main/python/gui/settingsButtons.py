@@ -19,24 +19,32 @@ class SettingsButtonsFrame(QFrame):
         self.setFrameShadow(QFrame.Raised)
 
         self.photoButton = QPushButton(text="Photo")
-        self.photoButton.setFixedSize(150,40)
+        self.photoButton.setFixedSize(150, 40)
         self.photoButton.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
 
         self.showProductsButton = QPushButton(text="Search Products")
-        self.showProductsButton.setFixedSize(150,40)
-        self.showProductsButton.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        self.showProductsButton.setFixedSize(150, 40)
+        self.showProductsButton.setSizePolicy(
+            QSizePolicy.Fixed, QSizePolicy.Fixed
+        )
 
         self.changeUserButton = QPushButton(text="Switch User")
-        self.changeUserButton.setFixedSize(150,40)
-        self.changeUserButton.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        self.changeUserButton.setFixedSize(150, 40)
+        self.changeUserButton.setSizePolicy(
+            QSizePolicy.Fixed, QSizePolicy.Fixed
+        )
 
         self.prevProductButton = QPushButton(text="Previous")
-        self.prevProductButton.setFixedSize(150,40)
-        self.prevProductButton.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        self.prevProductButton.setFixedSize(150, 40)
+        self.prevProductButton.setSizePolicy(
+            QSizePolicy.Fixed, QSizePolicy.Fixed
+        )
 
         self.nextProductButton = QPushButton(text="Next")
-        self.nextProductButton.setFixedSize(150,40)
-        self.nextProductButton.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        self.nextProductButton.setFixedSize(150, 40)
+        self.nextProductButton.setSizePolicy(
+            QSizePolicy.Fixed, QSizePolicy.Fixed
+        )
 
         self.layout.addWidget(self.photoButton)
         self.layout.addWidget(self.showProductsButton)

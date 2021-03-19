@@ -123,7 +123,7 @@ class CameraDisplayFrame(QFrame):
         """
         super().__init__()
         self.top = top
-        self.setMinimumSize(800,640)
+        self.setMinimumSize(800, 640)
         self.setAutoFillBackground(False)
         self.setFrameShape(QFrame.StyledPanel)
         self.setFrameShadow(QFrame.Raised)

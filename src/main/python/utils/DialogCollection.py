@@ -13,10 +13,11 @@ from PyQt5.QtWidgets import (
     QFormLayout,
     QVBoxLayout,
     QPushButton,
-    QWidget
+    QWidget,
 )
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
+
 
 def logUserIn():
     lDialog = LoginDialog()
@@ -48,7 +49,7 @@ def createAccount():
         return None, None
     del cDialog
 
-    if password or login:
+    if not (password or login):
         errorOccured("Fill all fields!!")
         return
 
@@ -66,6 +67,26 @@ def createAccount():
     from utils.AppDataController import createNewUser
 
     createNewUser(login, password)
+
+
+def askNewUser():
+    cDialog = CreateAccountDialog()
+    cDialog.exec()
+    login = cDialog.loginText.text()
+    password = cDialog.passText.text()
+    pass2 = cDialog.passRepText.text()
+    if cDialog.result() == 0:
+        return None, None
+    del cDialog
+
+    if not (password or login):
+        errorOccured("Fill all fields!!")
+        return None, None
+
+    if password != pass2:
+        errorOccured("Passwords do not match!! Try again")
+        return None, None
+    return login, password
 
 
 def errorOccured(message):
@@ -90,7 +111,7 @@ def cameraChoice() -> int:
     return camDialog.deviceComboBox.currentIndex()
 
 
-def getFolderPath(parent) -> str:
+def getFolderPath(parent=None) -> str:
     # note: in windows 10, we need to pass parent reference to
     # the function. Otherwise QFileDialog will emit a silent crash
     return QFileDialog.getExistingDirectory(
@@ -100,7 +121,9 @@ def getFolderPath(parent) -> str:
 
 class InfoDialog(QDialog):
     def __init__(self):
-        super().__init__(None, Qt.WindowCloseButtonHint | Qt.WindowSystemMenuHint)
+        super().__init__(
+            None, Qt.WindowCloseButtonHint | Qt.WindowSystemMenuHint
+        )
 
         self.lo = QVBoxLayout(self)
         font = QFont()
@@ -143,7 +166,9 @@ class InfoDialog(QDialog):
 
 class LoginDialog(QDialog):
     def __init__(self):
-        super().__init__(None, Qt.WindowCloseButtonHint | Qt.WindowSystemMenuHint)
+        super().__init__(
+            None, Qt.WindowCloseButtonHint | Qt.WindowSystemMenuHint
+        )
         self.lo = QFormLayout(self)
         self.loginText = QLineEdit()
         self.loginText.setFixedWidth(170)
@@ -182,7 +207,9 @@ class LoginDialog(QDialog):
 
 class CreateAccountDialog(QDialog):
     def __init__(self):
-        super().__init__(None, Qt.WindowCloseButtonHint | Qt.WindowSystemMenuHint)
+        super().__init__(
+            None, Qt.WindowCloseButtonHint | Qt.WindowSystemMenuHint
+        )
 
         self.lo = QFormLayout(self)
         self.loginText = QLineEdit()
@@ -236,7 +263,9 @@ class CreateAccountDialog(QDialog):
 
 class CameraChooserDialog(QDialog):
     def __init__(self, deviceList):
-        super().__init__(None, Qt.WindowCloseButtonHint | Qt.WindowSystemMenuHint)
+        super().__init__(
+            None, Qt.WindowCloseButtonHint | Qt.WindowSystemMenuHint
+        )
 
         self.lo = QFormLayout(self)
         self.deviceComboBox = QComboBox(self)
