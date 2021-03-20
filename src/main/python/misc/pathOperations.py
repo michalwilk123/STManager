@@ -114,11 +114,9 @@ def createConfigFile() -> str:
     try:
         from utils.DialogCollection import getFolderPath, askNewUser
 
-        # photoDirectory = getFolderPath()
-        photoDirectory = 'C:/Users/michal/Desktop'
+        photoDirectory = getFolderPath()
 
-        # newLogin, newPassword = askNewUser()
-        newLogin, newPassword = "hehe", "pass"
+        newLogin, newPassword = askNewUser()
 
         while newLogin is None or newPassword is None:
             newLogin, newPassword = askNewUser()

@@ -110,10 +110,9 @@ def cameraChoice() -> int:
 
 
 def getFolderPath(parent=None) -> str:
-    # note: in windows 10, we need to pass parent reference to
-    # the function. Otherwise QFileDialog will emit a silent crash
     return QFileDialog.getExistingDirectory(
-        parent, options=QFileDialog.DontUseNativeDialog
+        # parent, options=QFileDialog.DontUseNativeDialog # might work, bug on the side of qt5
+        options=QFileDialog.ShowDirsOnly | QFileDialog.DontUseNativeDialog
     )
 
 
