@@ -44,7 +44,6 @@ _product you are looking for._
 ### Download prebuild version:
 * [Windows](https://sourceforge.net/projects/stmanager-python/files/windows/)
 * [Linux](https://sourceforge.net/projects/stmanager-python/files/linux/)
-* ~Mac~
 
 <br/>
 
@@ -72,12 +71,12 @@ of the available links.
 __Run application from source__
 ```bash
 git clone https://github.com/michalwilk123/STManager.git
-make install
+make install_packages
 make
 ```
 
 __Create an executable for the app__
 ```bash
 git clone https://github.com/michalwilk123/STManager.git
-make installer
+make install_local
 ```
