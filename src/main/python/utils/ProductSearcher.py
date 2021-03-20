@@ -33,7 +33,9 @@ bigFont.setPointSize(14)
 
 class ProductSearcher(QDialog):
     def __init__(self):
-        super().__init__(None, Qt.WindowCloseButtonHint | Qt.WindowSystemMenuHint)
+        super().__init__(
+            None, Qt.WindowCloseButtonHint | Qt.WindowSystemMenuHint
+        )
         self.setFixedSize(880, 560)
         self.tableScrollArea = ProductTable(self)
         self.usrList = getUsrList()
@@ -253,13 +255,13 @@ class ProductTable(QScrollArea):
 
     def displayProductList(self, prodList, user: str = None):
         self.clearTable()
-        self.top.titleLabel.setText(f"Results:    {len(prodList)}")
         self.prodList = list(
             filter(
                 lambda row: any([row["id"], row["desc"], row["filenames"]]),
                 prodList,
             )
         )
+        self.top.titleLabel.setText(f"Results:    {len(self.prodList)}")
         self.table.setRowCount(len(self.prodList) + 1)
 
         for i, row in enumerate(self.prodList, 1):
