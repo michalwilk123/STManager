@@ -231,6 +231,10 @@ class ProductTable(QScrollArea):
         self.contents.setGeometry(0, 0, 400, 430)
         self.layout = QVBoxLayout(self.contents)
         self.table = QTableWidget(self.contents)
+        self.table.setStyleSheet(
+            "background-color: #DDDDDD;"
+            "color:black;"
+        )
         microfont = QFont()
         microfont.setPointSize(7)
         self.table.setFont(microfont)
