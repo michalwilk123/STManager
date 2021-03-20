@@ -20,7 +20,6 @@ class AppView(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        # self.setMinimumSize(900, 640)
         # 700 is base height + (menubar.width + statusbar.width)
         self.cameraChoice = 0
         self.cWidget = QWidget()

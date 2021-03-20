@@ -4,7 +4,9 @@ import time
 import json
 from fbs_runtime import platform
 
-CONFIG_FILE_FILENAME = "appData.json"
+class ConfigPaths:
+    CONFIG_FILE_FILENAME = "appData.json"
+    CONFIG_FILE_PATH = ""
 
 
 def findConfigFilePath() -> str:
@@ -13,6 +15,8 @@ def findConfigFilePath() -> str:
     Diffrent behaviour per platform
     If found one -> returns path, otherwise
     returns None.
+
+    If correct path found -> function caches the result
 
     Windows:
     1) AppData\\Local\\STManager
@@ -25,30 +29,37 @@ def findConfigFilePath() -> str:
     Other:
     Throws error
     """
+    if ConfigPaths.CONFIG_FILE_PATH:
+        return ConfigPaths.CONFIG_FILE_PATH    
+    
     p = pathlib.Path.home()
 
     if platform.is_windows():
         # look for config file in appData
         if os.path.exists(
             found := p.joinpath(
-                "%APPDATA%", "Local", "STManager", CONFIG_FILE_FILENAME
+                "AppData", "Local", "STManager", ConfigPaths.CONFIG_FILE_FILENAME
             )
         ):
+            ConfigPaths.CONFIG_FILE_PATH = found
             return found
         elif os.path.exists(
-            found := p.joinpath(".stmanager", CONFIG_FILE_FILENAME)
+            found := p.joinpath(".stmanager", ConfigPaths.CONFIG_FILE_FILENAME)
         ):
+            ConfigPaths.CONFIG_FILE_PATH = found
             return found
 
         return None  # config file not found -> returning None
     elif platform.is_linux():
         if os.path.exists(
-            found := p.joinpath(".config", "STManager", CONFIG_FILE_FILENAME)
+            found := p.joinpath(".config", "STManager", ConfigPaths.CONFIG_FILE_FILENAME)
         ):
+            ConfigPaths.CONFIG_FILE_PATH = found
             return found
         elif os.path.exists(
-            found := p.joinpath(".stmanager", CONFIG_FILE_FILENAME)
+            found := p.joinpath(".stmanager", ConfigPaths.CONFIG_FILE_FILENAME)
         ):
+            ConfigPaths.CONFIG_FILE_PATH = found
             return found
 
         return None
@@ -68,18 +79,12 @@ def createConfigFile() -> str:
     Creates config file and returns its location.
     Expects that the config file does not exist
     """
-    if findConfigFilePath() is not None:
-        from utils.DialogCollection import errorOccured
-
-        errorOccured("Trying to overwrite current config file!! Abort")
-        raise RuntimeError("Trying to overwrite current config file!! Abort")
-
-    p = pathlib.Path.home()
+    userDirPath = pathlib.Path.home()
 
     if platform.is_windows():
-        defautlDataPath = p.joinpath("%APPDATA%", "Local")
+        defautlDataPath = userDirPath.joinpath("AppData", "Local")
     elif platform.is_linux():
-        defautlDataPath = p.joinpath(".config")
+        defautlDataPath = userDirPath.joinpath(".config")
     else:
         from utils.DialogCollection import errorOccured
 
@@ -96,7 +101,7 @@ def createConfigFile() -> str:
         configPath = defautlDataPath
     else:
         # creating folder and empty config file
-        altDataPath = p.joinpath(".stmanager")
+        altDataPath = userDirPath.joinpath(".stmanager")
         configPath = altDataPath
 
     try:
@@ -104,14 +109,16 @@ def createConfigFile() -> str:
     except FileExistsError:
         pass
 
-    configPath = configPath.joinpath(CONFIG_FILE_FILENAME)
+    configPath = configPath.joinpath(ConfigPaths.CONFIG_FILE_FILENAME)
 
     try:
         from utils.DialogCollection import getFolderPath, askNewUser
 
-        photoDirectory = getFolderPath()
+        # photoDirectory = getFolderPath()
+        photoDirectory = 'C:/Users/michal/Desktop'
 
-        newLogin, newPassword = askNewUser()
+        # newLogin, newPassword = askNewUser()
+        newLogin, newPassword = "hehe", "pass"
 
         while newLogin is None or newPassword is None:
             newLogin, newPassword = askNewUser()

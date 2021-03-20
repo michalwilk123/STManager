@@ -1,7 +1,6 @@
 """
 Operations with the json file. Creates account. Executes json pseudo queries
 """
-from config.macros import CONFIG_FILE_PATH
 import misc.pathOperations as pathOper
 import json
 import time
@@ -103,43 +102,34 @@ def createNullProduct(index: int):
     }
 
 
-def resolveConfigFile(debug: bool = False):
+def resolveConfigFile(debug: bool = False) -> str:
     """
     Fix problems with the configuration file.
     Returns string with new file location
     """
+    if (path := pathOper.findConfigFilePath()) is None:
+        if debug:
+            print("Config file does not exist! Creating new one")
+        path = pathOper.createConfigFile()
+    
     if debug:
-        print("Config file does not exist! Creating new one")
-    CONFIG_FILE_PATH = pathOper.createConfigFile()
-    if debug:
-        print(f"File created at {CONFIG_FILE_PATH}")
+        print(f"Config file path: {path}")
+
+    return path
 
 
 def getAllData(debug: bool = False):
     """
     Get all app data in form of dictionary
     """
-    try:
-        with open(CONFIG_FILE_PATH, "r") as dataFile:
+    with open(resolveConfigFile(debug), "r") as dataFile:
             data = json.loads(dataFile.read())
-    except (FileNotFoundError, TypeError):
-        resolveConfigFile()
-        return getAllData(debug)
-
     return data
 
 
 def setNewData(data):
-    try:
-        with open(CONFIG_FILE_PATH, "w") as oldData:
-            oldData.write(json.dumps(data))
-    except OSError as e:
-        from utils.DialogCollection import errorOccured
-        errorOccured("No permission to access config file!")
-        raise e(f"NO PERMISSION TO ACCESS {CONFIG_FILE_PATH} FILE")
-    except (FileNotFoundError, TypeError):
-        resolveConfigFile()
-        setNewData(data)
+    with open(resolveConfigFile(), "w") as oldData:
+        oldData.write(json.dumps(data))
 
 
 def getUsrList():
