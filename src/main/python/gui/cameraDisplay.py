@@ -5,7 +5,7 @@ from __future__ import annotations
 from PyQt5.QtWidgets import QFrame, QLabel, QSizePolicy
 from PyQt5.QtCore import Qt, QThread, pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QImage, QPixmap
-from config.macros import FRAME_RATE, FRAMES_BEETWEEN_SCANS
+from config.macros import FRAME_RATE, FRAMES_BEETWEEN_SCANS, PHOTO_TIMEOUT
 from pyzbar import pyzbar
 from playsound import playsound
 from threading import Thread
@@ -166,7 +166,16 @@ class CameraDisplayFrame(QFrame):
         self.label.setMinimumHeight(self.height())
         self.label.setMinimumWidth(self.width())
 
-    def takePicture(self, savePath: str, username: str = "Anonim"):
+    def takePicture(self, savePath: str, username: str = "Anonim") -> str:
+        """
+        Take picture, if successful -> returns path to newly created
+        image
+        if not -> returns empty string
+        """
+        # bug: app can produce silent crash when clicking the 
+        # photo button too intensively, can fix it by replacing some variables ex. (RequestPhoto)
+        # this is probably a concurrency problem
+
         timestamp = time.strftime("%d-%m-%Y-%H_%M_%S")
         CameraPreviewThread.currentPath = os.path.join(
             savePath,
@@ -178,6 +187,7 @@ class CameraDisplayFrame(QFrame):
         # below we are wating 2 frames for the saving to take place
         # after that we expect for the picture to be loaded correctly
         QThread.msleep(CameraPreviewThread.ms_per_frame * 2)
+        return self.cameraThread.currentPath
 
     def noDeviceDialog(self):
         from utils.DialogCollection import errorOccured

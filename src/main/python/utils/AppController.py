@@ -80,9 +80,13 @@ class AppController:
         if CameraPreviewThread.deviceNum is None:
             print("no camera :(")
             return
+            
+        photoPath = self.view.cameraDisplayFrame.takePicture(self.savePath, self.username)
 
-        self.view.cameraDisplayFrame.takePicture(self.savePath, self.username)
-        photoPath: str = CameraPreviewThread.getLastPath()
+        if not photoPath:
+            print("Could not create photo")
+            return
+
         photoName: str = photoPath.split("/")[-1]
         # adding newly taken photo to preview scrollbar
         self.view.productManagerFrame.getScrollArea().addItemPreview(
