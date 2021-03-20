@@ -173,10 +173,8 @@ class LoginDialog(QDialog):
         self.passText = QLineEdit()
         self.passText.setEchoMode(QLineEdit.Password)
         self.passText.setFixedWidth(170)
-        self.passText.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
 
         self.dialogButtons = QDialogButtonBox()
-        self.loginText.setFixedSize(170, 30)
         self.dialogButtons.setStandardButtons(
             QDialogButtonBox.Cancel | QDialogButtonBox.Ok
         )
