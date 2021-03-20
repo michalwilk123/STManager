@@ -4,7 +4,6 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-fbs = "*"
 pyqt5 = "*"
 opencv-python-headless = "*"
 pyzbar = "*"
@@ -13,6 +12,7 @@ vext = "*"
 pywin32 = {version = "*", sys_platform = "== 'win32'"}
 pyinstaller = "*"
 qtmodern = "*"
+fbs = "==0.9.0"
 
 [dev-packages]
 
