@@ -94,8 +94,6 @@ __Arch based systems like Manjaro, Arch:__
 sudo pacman -U install STManager.pkg.tar.xz
 ```
 
-__Every installer is bundled with a corresponding uninstaller!__
-
 ### Build from source:
 
 __Clone this repository:__
@@ -112,6 +110,13 @@ make
 ```
 
 __Create a binary executable for the app:__
+
+_Because this project is very dependant on the fbs module (0.9 version), it requires_
+_an older version of pyinstaller (<=3.5). For build to pass you need tweak function_
+*strip_paths_in_code in PyInstaller/building/utils.py to work with the new python 3.8*
+_code objects._
+_On Arch based systems i did not faced any additional issues. Building on ubuntu requires installing extra opencv package from apt-get. On windows there are issues with importing .dll libraries from opencv dependencies_
+
 ```bash
 git clone https://github.com/michalwilk123/STManager.git
 make install_packages
@@ -119,8 +124,6 @@ make install_local
 ```
 
 __Create an installer for the app:__
-_Installer version depends on user platform. In other words:_
-_you cannot create installer for linux distro from windows_
 ```bash
 git clone https://github.com/michalwilk123/STManager.git
 make install_packages
