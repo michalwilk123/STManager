@@ -1,4 +1,7 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/michalwilk123/stmanager/badge)](https://www.codefactor.io/repository/github/michalwilk123/stmanager)
+
+
+[![Download STManager](https://sourceforge.net/sflogo.php?type=11&group_id=3337286)](https://sourceforge.net/p/stmanager-python/)
 # __STManager__
 ### ![There should be big app icon](src/main/icons/githubIcon.png)
 ---
@@ -13,7 +16,7 @@
 __STManager__ takes photos of your products, correlates them with their product barcode
 and then lets you go through them.
 
-App manages to detect barcodes from camera or from hand scanner(_when scanner mode selected_).
+App manages to detect barcodes from camera or from hand scanner (_when scanner mode selected_).
 You can then search through the products and chose many of the available filters to find the
 exact item you are looking for.
 
@@ -60,18 +63,22 @@ _product you are looking for._
 <br/>
 
 ### Install:
-Instructions and binary installers available on the sourceforge page. Choose one
-of the available links.
+Link for the binary version of the application:
 
-* [Windows](https://sourceforge.net/projects/stmanager-python/files/windows/)
-* [Linux](https://sourceforge.net/projects/stmanager-python/files/linux/)
+[![Download STManager](https://a.fsdn.com/con/app/sf-download-button)](https://sourceforge.net/projects/stmanager-python/files/latest/download)
+
+---
 
 __Windows 10:__
-1) Download installer from link _1)_
+
+1) Download installer using above link
+
 2) Follow instructions from the installer
 
 __Debian based systems like Ubuntu or Linux Mint:__
-1) Download .deb package from link _2)_
+
+1) Download .deb package using above link
+
 2) In the folder containing downloaded file execute below command:
 
 ```bash
@@ -80,7 +87,8 @@ sudo apt-get install ./STManager.deb
 
 __Arch based systems like Manjaro, Arch:__
 
-1) Download STManager.pkg.tar.xz file from link _2)_
+1) Download STManager.pkg.tar.xz file using above link
+
 2) In the folder containing downloaded file execute below command:
 ```bash
 sudo pacman -U install STManager.pkg.tar.xz
