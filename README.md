@@ -75,7 +75,7 @@ __Debian based systems like Ubuntu or Linux Mint:__
 2) In the folder containing downloaded file execute below command:
 
 ```bash
-sudo apt-get install STManager.deb
+sudo apt-get install ./STManager.deb
 ```
 
 __Arch based systems like Manjaro, Arch:__
@@ -106,6 +106,7 @@ make
 __Create a binary executable for the app:__
 ```bash
 git clone https://github.com/michalwilk123/STManager.git
+make install_packages
 make install_local
 ```
 
@@ -114,5 +115,6 @@ _Installer version depends on user platform. In other words:_
 _you cannot create installer for linux distro from windows_
 ```bash
 git clone https://github.com/michalwilk123/STManager.git
+make install_packages
 make installer
 ```

@@ -12,7 +12,7 @@ installer: install_local
 	@pipenv run python -m fbs installer
 
 
-install_local: install_packages
+install_local: 
 	@pipenv run python -m fbs clean
 	@pipenv run python -m fbs freeze
 	
