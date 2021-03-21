@@ -111,7 +111,7 @@ def resolveConfigFile(debug: bool = False) -> str:
         if debug:
             print("Config file does not exist! Creating new one")
         path = pathOper.createConfigFile()
-    
+
     if debug:
         print(f"Config file path: {path}")
 
@@ -123,7 +123,7 @@ def getAllData(debug: bool = False):
     Get all app data in form of dictionary
     """
     with open(resolveConfigFile(debug), "r") as dataFile:
-            data = json.loads(dataFile.read())
+        data = json.loads(dataFile.read())
     return data
 
 

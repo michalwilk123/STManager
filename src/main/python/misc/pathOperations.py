@@ -4,6 +4,7 @@ import time
 import json
 from fbs_runtime import platform
 
+
 class ConfigPaths:
     CONFIG_FILE_FILENAME = "appData.json"
     CONFIG_FILE_PATH = ""
@@ -30,15 +31,18 @@ def findConfigFilePath() -> str:
     Throws error
     """
     if ConfigPaths.CONFIG_FILE_PATH:
-        return ConfigPaths.CONFIG_FILE_PATH    
-    
+        return ConfigPaths.CONFIG_FILE_PATH
+
     p = pathlib.Path.home()
 
     if platform.is_windows():
         # look for config file in appData
         if os.path.exists(
             found := p.joinpath(
-                "AppData", "Local", "STManager", ConfigPaths.CONFIG_FILE_FILENAME
+                "AppData",
+                "Local",
+                "STManager",
+                ConfigPaths.CONFIG_FILE_FILENAME,
             )
         ):
             ConfigPaths.CONFIG_FILE_PATH = found
@@ -52,7 +56,9 @@ def findConfigFilePath() -> str:
         return None  # config file not found -> returning None
     elif platform.is_linux():
         if os.path.exists(
-            found := p.joinpath(".config", "STManager", ConfigPaths.CONFIG_FILE_FILENAME)
+            found := p.joinpath(
+                ".config", "STManager", ConfigPaths.CONFIG_FILE_FILENAME
+            )
         ):
             ConfigPaths.CONFIG_FILE_PATH = found
             return found

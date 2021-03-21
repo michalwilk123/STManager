@@ -172,8 +172,9 @@ class CameraDisplayFrame(QFrame):
         image
         if not -> returns empty string
         """
-        # bug: app can produce silent crash when clicking the 
-        # photo button too intensively, can fix it by replacing some variables ex. (RequestPhoto)
+        # bug: app can produce silent crash when clicking the
+        # photo button too intensively, can fix it
+        # by replacing some variables ex. RequestPhoto
         # this is probably a concurrency problem
 
         timestamp = time.strftime("%d-%m-%Y-%H_%M_%S")

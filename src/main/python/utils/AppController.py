@@ -80,8 +80,10 @@ class AppController:
         if CameraPreviewThread.deviceNum is None:
             print("no camera :(")
             return
-            
-        photoPath = self.view.cameraDisplayFrame.takePicture(self.savePath, self.username)
+
+        photoPath = self.view.cameraDisplayFrame.takePicture(
+            self.savePath, self.username
+        )
 
         if not photoPath:
             print("Could not create photo")

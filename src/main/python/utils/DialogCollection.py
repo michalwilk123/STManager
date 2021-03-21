@@ -111,8 +111,10 @@ def cameraChoice() -> int:
 
 def getFolderPath(parent=None) -> str:
     return QFileDialog.getExistingDirectory(
-        # parent, options=QFileDialog.DontUseNativeDialog # might work, bug on the side of qt5
-        options=QFileDialog.ShowDirsOnly | QFileDialog.DontUseNativeDialog
+        # parent, options=QFileDialog.DontUseNativeDialog
+        # might work, bug on the side of qt5
+        options=QFileDialog.ShowDirsOnly
+        | QFileDialog.DontUseNativeDialog
     )
 
 
